@@ -65,9 +65,10 @@ Nous avons préparé et vérifié les jeux de données avec RStudio et des scrip
 
 ## Consulter le site
 
-La visualisation est accessible ici : <https://mathysgtr.github.io/defi-3_gautier-hislers/production/>.
+La visualisation est directement accessible ici : <http://mathysgtr.github.io/odissee-defi-3_gautier-hislers/>.
 
-La visualisation et son code source se trouvent dans [`production/`](production/). Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
+Son code source se trouvent dans [`production/`](production/).
+Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
 
 ```bash
 python3 -m http.server 8766
