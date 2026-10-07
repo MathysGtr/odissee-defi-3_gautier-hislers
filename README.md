@@ -49,11 +49,11 @@ Les tableaux et les contours nécessaires au site se trouvent dans [`production/
 ## Limites rencontrées
 
 - Les indicateurs portent sur des années, des populations et des définitions différentes. Le diabète déclaré dans le Baromètre ne mesure pas le diabète traité de la carte départementale. Les taux cardiovasculaires publiés à l'intercommunalité ne deviennent pas communaux quand on recherche une commune.
-- Les rapprochements entre cartes décrivent des écarts territoriaux ; ils ne démontrent pas que la pauvreté, le suivi médical ou l'offre de soins causent un résultat de santé. Nous n'avons donc construit ni score global de santé ni modèle causal.
+- Les rapprochements entre cartes décrivent des écarts territoriaux ; ils ne démontrent pas que la pauvreté, le suivi médical ou l'offre de soins causent un résultat de santé.
 - Certains jeux ne couvrent pas tous les territoires ou comportent des valeurs manquantes. Les comparaisons de rangs dans la prévention conservent les différents nombres de départements disponibles. Le fond de carte communal détaillé concerne la France hexagonale ; les valeurs disponibles pour l'outre-mer restent consultables sous forme de chiffres.
 - Les 59 points du zoom cardiologie sont des **adresses d'exercice RPPS sélectionnées et géocodées**, pas 59 cardiologues uniques ni un inventaire exhaustif. Une adresse inscrite ne garantit pas qu'un praticien y consulte aujourd'hui ou accepte de nouveaux patients. L'APL date de 2019 et les adresses RPPS de 2026 : elles ne décrivent pas le même instant.
 - Le trajet et les zones de 15, 30, 45 et 60 minutes sont calculés en voiture depuis un point de départ à Gien, sur un réseau routier, sans trafic en temps réel. Ils ne représentent ni le trajet depuis chaque domicile ni l'obtention d'un rendez-vous.
-- La recherche de communes, les polices et deux bibliothèques graphiques dépendent de services externes : une connexion Internet est nécessaire pour profiter de toutes les fonctions. Le site propose des liens d'évitement, des descriptions textuelles des cartes, des tableaux de valeurs, une navigation au clavier et une réduction des animations selon la préférence du système. Ces contrôles ne valent pas certification d'accessibilité.
+- La recherche de communes, les polices et deux bibliothèques graphiques dépendent de services externes : une connexion Internet est nécessaire pour profiter de toutes les fonctions. Le site propose des liens d'évitement, des descriptions textuelles des cartes, des tableaux de valeurs, une navigation au clavier et une réduction des animations selon la préférence du système.
 
 ## Frugalité
 
@@ -64,6 +64,8 @@ Le dossier `production/` pèse environ **4,1 Mo**. Il contient les tableaux et l
 Nous avons préparé et vérifié les jeux de données avec RStudio et des scripts de traitement afin de ne conserver que les indicateurs utilisés dans le récit. Le site utilise D3 et TopoJSON pour les cartes et les transitions. Claude Code/Design a aidé à prototyper et à mettre en œuvre l'interface à partir de nos consignes. Le choix des questions, des comparaisons, des formulations et des limites affichées relève de notre travail éditorial ; les valeurs présentées ont été contrôlées dans les fichiers sources.
 
 ## Consulter le site
+
+Après le transfert du dépôt à MathysGtr sous le nom `defi-3_gauthier-hislers` et l'activation de GitHub Pages, l'adresse de la visualisation sera : <https://mathysgtr.github.io/defi-3_gauthier-hislers/production/>. Ce lien n'est pas encore actif.
 
 La visualisation et son code source se trouvent dans [`production/`](production/). Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
 
