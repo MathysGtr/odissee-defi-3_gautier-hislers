@@ -1,7 +1,7 @@
 # Que nous apprend notre adresse sur notre santé ?
 
-**Équipe :** Evann Hislers et Mathys Gauthier  
-**Défi :** Odissé Dataviz Challenge 2026, défi 3 — Inégalités sociales et territoriales de santé
+**Équipe :** Evann Hislers et Mathys Gautier  
+**Défi :** Odissé Dataviz Challenge 2026, Défi 3 — Inégalités sociales et territoriales de santé
 
 ## Notre question
 
@@ -9,23 +9,23 @@ Que peut nous apprendre notre adresse sur les inégalités de santé, et que ne 
 
 ## Notre visualisation
 
-Notre site est un récit interactif que l'on fait avancer en défilant. Les cartes changent de mesure et d'échelle au fil de la lecture : nous partons des départements français, puis nous entrons dans onze communes autour de Gien. À la fin, le lecteur peut rechercher sa propre commune et la comparer à une autre. Chaque chiffre conserve l'échelle à laquelle il a été publié.
+Notre site est un récit interactif que l'on fait avancer en défilant. Les cartes changent de mesure et d'échelle au fil de la lecture : nous partons des départements français, puis nous terminons par un cas très précis, avec onze communes autour de Gien, dans le Loiret. À la fin, un module intéractif permet au lecteur de rechercher sa propre commune et la comparer à une autre.
 
-**1. Une carte de santé ne raconte pas toute l'histoire.** Nous ouvrons avec le diabète traité par médicament, mesuré par département en 2023. En Seine-Saint-Denis, son taux corrigé des différences d'âge est de 8,21 %. La carte devient ensuite celle de la pauvreté. En 2023, celle-ci atteint 29,5 % dans le même département. Mais les deux géographies ne se superposent qu'en partie : parmi les 20 départements aux valeurs les plus élevées pour chaque mesure, seuls 9 figurent dans les deux groupes. Le lecteur voit ainsi un rapprochement possible, puis ses limites.
+**1. Une carte de santé ne raconte pas tout !** Nous ouvrons notre récit molette avec le diabète traité par médicament, mesuré par département en 2023. En Seine-Saint-Denis, son taux corrigé des différences d'âge est de 8,21 %. La carte devient ensuite celle de la pauvreté. En 2023, celle-ci atteint 29,5 % dans le même département. Mais les deux géographies ne se superposent qu'en partie : parmi les 20 départements aux valeurs les plus élevées pour chaque mesure, seuls 9 figurent dans les deux groupes. Le lecteur voit ainsi un rapprochement possible, puis ses limites. Nous avons choisi de prendre d’abord cet indicateur car le diabète est de plus en plus associé dans l’imaginaire collectif à la consommation de produits ultra-transformés, souvent moins chers.
 
-**2. Les écarts existent aussi entre personnes.** Deux barres remplacent la carte pour présenter le Baromètre 2024 de Santé publique France. Dans cette enquête, 4,5 % des adultes se disant financièrement à l'aise déclarent un diabète, contre 9,3 % de ceux disant connaître des difficultés financières. Ces résultats nationaux concernent des personnes de 18 à 79 ans et un *diabète déclaré* : ils ne sont pas la version détaillée de la carte départementale du *diabète traité*.
+**2. Les écarts existent aussi entre personnes.** Dans le baromètre 2024 de Santé Publique France, 4,5 % des adultes se disant financièrement à l'aise déclarent un diabète, contre 9,3 % de ceux disant connaître des difficultés financières. À noter que ces résultats nationaux concernent des personnes de 18 à 79 ans et un diabète déclaré (différent du diabète traité de la carte précédente).
 
-**3. Changer d'indicateur change le portrait d'un territoire.** Trois colonnes se succèdent pour la grossesse : couverture sociale, entretien prénatal précoce et prématurité. L'entretien concerne 33,5 % des femmes comptées en Seine-Saint-Denis, contre 80,7 % dans le Finistère ; la Haute-Marne atteint 10,4 % de naissances prématurées. Puis trois cartes de prévention suivent la Somme : elle se classe 14e sur 96 pour la vaccination HPV des filles, 22e sur 94 pour le dépistage du sein et 88e sur 94 pour le dépistage colorectal. Les publics et les actes diffèrent ; il ne s'agit pas d'un palmarès général de la prévention.
+**3. Modifier l'indicateur change l'analyse d'un territoire.** Trois colonnes se succèdent pour la grossesse : couverture sociale, entretien prénatal précoce et prématurité. L'entretien prénatal concerne 33,5 % des femmes comptées en Seine-Saint-Denis, contre 80,7 % dans le Finistère ; la Haute-Marne atteint 10,4 % de naissances prématurées. Puis trois cartes de prévention suivent la Somme : elle se classe 14e sur 96 pour la vaccination HPV des filles, 22e sur 94 pour le dépistage du sein et 88e sur 94 pour le dépistage colorectal.
 
-**4. Descendre à l'échelle communale rend d'autres écarts visibles.** La carte zoome sur les onze communes de la communauté de communes Giennoises. Un indice publié par Odissé situe le contexte social de chacune par rapport aux communes de France. Gien et Coullons appartiennent au groupe des 20 % de communes les plus défavorisées ; Boismorand et Le Moulinet-sur-Solin, à celui des 20 % les plus favorisées. Sans changer les contours, les couleurs représentent ensuite l'accès potentiel à un cardiologue. Cet indicateur de 2019 varie de 5,75 à 9,50 contacts potentiellement accessibles par an pour 100 habitants dans les onze communes. Il estime une offre accessible, pas des consultations effectivement obtenues.
+**4. Descendre à l'échelle communale rend d'autres écarts visibles.** La carte zoome sur les onze communes de la communauté de communes Giennoises. Un indice publié par Odissé situe le contexte social de chacune par rapport aux communes de France. Gien et Coullons appartiennent au groupe des 20 % de communes les plus défavorisées ; Boismorand et Le Moulinet-sur-Solin, à celui des 20 % les plus favorisées. Sans changer les contours, les couleurs représentent ensuite l'accès potentiel à un cardiologue. Cet indicateur de 2019 varie de 5,75 à 9,50 contacts potentiellement accessibles par an pour 100 habitants dans les onze communes.
 
-**5. Que signifie cette accessibilité sur le terrain ?** Nous avons retenu la cardiologie comme exemple d'accès à une spécialité parce qu'un indicateur est disponible à la commune et que les adresses d'exercice peuvent être situées sur une carte. Chaque point représente une adresse retenue dans l'Annuaire Santé, pas un cardiologue unique. Les points apparaissent autour de Gien, puis un trajet routier estimé relie le centre de la commune à un lieu retenu à La Bussière : 15,2 minutes en voiture. Des zones de 15, 30, 45 et 60 minutes montrent ensuite ce que l'on peut atteindre depuis ce même point de départ, sans s'arrêter aux frontières administratives. Ces calculs ne représentent ni le trajet depuis chaque domicile ni la disponibilité de rendez-vous. La séquence ne prétend pas expliquer les maladies cardiovasculaires par la distance aux soins.
+**5. Que signifie cette accessibilité sur le terrain ?** Nous avons retenu la cardiologie comme exemple d'accès à une spécialité parce qu'un indicateur est disponible à la commune et que les lieux d'exercice peuvent être situés sur une carte. Ces lieux apparaissent autour de Gien, puis un trajet routier estimé relie le centre de la commune à un lieu retenu à La Bussière : 15,2 minutes en voiture. Des zones de 15, 30, 45 et 60 minutes montrent ensuite ce que l'on peut atteindre depuis ce même point de départ, sans s'arrêter aux frontières administratives. 
 
-**6. Et chez vous ?** Le lecteur recherche une commune, explore les indicateurs disponibles et peut comparer deux lieux. Sur ordinateur, les cartes sont côte à côte ; sur téléphone, les fiches se suivent et un bouton permet de passer d'une carte à l'autre. L'outil précise toujours si un chiffre concerne le département, l'intercommunalité ou la commune. Par exemple, la mesure de cardiopathie ischémique issue d'Odissé reste celle de l'intercommunalité : la recherche d'une commune ne la transforme pas en statistique communale. Le fond de carte détaillé couvre la France hexagonale ; lorsqu'une commune ultramarine est recherchée, les chiffres disponibles sont présentés sans lui attribuer une couleur sur ce fond.
+**6. Et chez vous ?** Le lecteur peut rechercher une commune, explorer les indicateurs disponibles et comparer deux lieux sur une carte partagée en deux. L'outil précise toujours si un chiffre concerne le département, l'intercommunalité ou la commune. Par exemple, la mesure de cardiopathie ischémique issue d'Odissé reste celle de l'intercommunalité : la recherche d'une commune ne la transforme pas en statistique communale.
 
 ## Ce que nous cherchons à montrer
 
-Une adresse permet de situer des écarts de santé, de conditions sociales, de prévention et d'accès aux soins. Elle ne donne ni le parcours d'une personne ni la cause d'une maladie. Nous avons donc choisi de montrer plusieurs cartes et leurs décalages, plutôt que de fabriquer un score unique ou d'attribuer l'état de santé d'un territoire à un seul facteur.
+Une adresse permet de situer des écarts de santé, de conditions sociales, de prévention et d'accès aux soins. Elle ne donne néanmoins ni le parcours d'une personne ni la cause d'une maladie. Nous avons donc choisi de montrer plusieurs cartes et leurs décalages, plutôt que de fabriquer un score unique ou d'attribuer l'état de santé d'un territoire à un seul facteur.
 
 ## Les données utilisées
 
@@ -65,7 +65,7 @@ Nous avons préparé et vérifié les jeux de données avec RStudio et des scrip
 
 ## Consulter le site
 
-La visualisation est accessible ici : <https://mathysgtr.github.io/defi-3_gauthier-hislers/production/>.
+La visualisation est accessible ici : <https://mathysgtr.github.io/defi-3_gautier-hislers/production/>.
 
 La visualisation et son code source se trouvent dans [`production/`](production/). Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
 
