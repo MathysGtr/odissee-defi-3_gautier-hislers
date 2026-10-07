@@ -1,0 +1,12 @@
+code_commune,commune,epci_2024,origine,site_id,temps_route_min,distance_route_km,methode,millesime_rpps
+45036,Boismorand,244500211,"centre communal, Geo API Gouv",cardio-024,8.8,7.0,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45096,Les Choux,244500211,"centre communal, Geo API Gouv",cardio-024,19.4,14.0,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45108,Coullons,244500211,"centre communal, Geo API Gouv",cardio-024,36.9,29.5,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45155,Gien,244500211,"centre communal, Geo API Gouv",cardio-024,15.2,7.7,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45180,Langesse,244500211,"centre communal, Geo API Gouv",cardio-024,21.0,15.8,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45218,Le Moulinet-sur-Solin,244500211,"centre communal, Geo API Gouv",cardio-024,70.4,20.7,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45227,Nevoy,244500211,"centre communal, Geo API Gouv",cardio-024,30.5,18.3,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45254,Poilly-lez-Gien,244500211,"centre communal, Geo API Gouv",cardio-024,28.8,21.6,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45271,Saint-Brisson-sur-Loire,244500211,"centre communal, Geo API Gouv",cardio-024,31.8,23.9,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45280,Saint-Gondon,244500211,"centre communal, Geo API Gouv",cardio-024,37.8,22.5,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01
+45291,Saint-Martin-sur-Ocre,244500211,"centre communal, Geo API Gouv",cardio-024,28.8,19.5,"Valhalla auto, réseau OpenStreetMap, sans trafic temps réel",extraction générée le 2026-10-01

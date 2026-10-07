@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<noscript><p style="padding:24px;font-family:Arial,sans-serif">Ce récit interactif nécessite JavaScript. Les <a href="data/departements_indicateurs.csv">données départementales</a> restent téléchargeables.</p></noscript>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Que nous apprend notre adresse sur notre santé ?</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#FFFFFF;color:#002B59;font-family:'Outfit',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#114B8A}a:hover{color:#CA1C60}
+button,input{font-family:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible,section[data-kf]:focus-visible,main:focus-visible{outline:3px solid #CA1C60;outline-offset:3px}
+#exploration h2:focus-visible{outline:3px solid #CA1C60;outline-offset:4px}
+#resultsSummary:focus-visible{outline:3px solid #CA1C60;outline-offset:4px}
+.skip-link{position:fixed;z-index:20;left:12px;top:-100px;background:#FFFFFF;color:#002B59;padding:10px 14px;border:2px solid #CA1C60}
+.skip-link:focus{top:10px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cap-swatch{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:19px;border:1px solid #002B59;color:#002B59;font-size:11px;font-weight:700;line-height:1}
+.iso-key{display:inline-flex;align-items:center;gap:5px;background:#FFFFFF;color:#002B59;border:1px solid #002B59;padding:3px 6px}
+.iso-key svg{display:block;flex:none}
+
+.data-table-wrap{max-height:240px;overflow:auto;margin-top:8px;border:1px solid #D5DEEA}.data-table{border-collapse:collapse;width:100%;font-size:12px;line-height:1.3}.data-table th,.data-table td{padding:6px 8px;border-bottom:1px solid #D5DEEA;text-align:left}.data-table th{position:sticky;top:0;background:#EEF4FF;color:#002B59}.data-table td:last-child{text-align:right;white-space:nowrap}.data-details{margin:10px 0;font-size:13px}.data-details summary{cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.cap-meta-short{display:none}
+@media(max-width:1279px){
+ .isochrone-title{font-size:clamp(28px,7vw,40px)!important;line-height:1.05!important;white-space:normal!important}
+ [data-cap][data-compact="1"] .cap-title{font-size:12px!important}
+ [data-cap][data-compact="1"] .cap-badge{font-size:10px!important;padding:1px 3px!important}
+ [data-cap][data-compact="1"] .cap-meta-full{display:none}
+ [data-cap][data-compact="1"] .cap-meta-short{display:block;font-size:12px;line-height:1.2;color:#114B8A}
+ [data-cap][data-compact="1"] .cap-legend{font-size:12px!important;gap:3px!important;flex-wrap:wrap}
+ [data-cap][data-compact="1"] .cap-swatch{min-width:18px!important;height:17px!important;font-size:10px!important}
+ header{gap:10px!important;padding:0 12px!important}
+ header nav{flex:1;min-width:0;margin:0!important;scroll-snap-type:x proximity;overscroll-behavior-inline:contain}
+ header nav button{scroll-snap-align:center}
+ main section[data-kf]:not(#exploration):not([data-kf="bar"]):not([data-kf="end"]){scroll-margin-top:56px}
+}
+@media(min-width:600px) and (max-width:1279px){
+ main section[data-kf]:not(#exploration):not([data-kf="bar"]):not([data-kf="end"]){justify-content:center}
+ main section[data-kf]:not(#exploration):not([data-kf="bar"]):not([data-kf="end"]) > div{width:min(560px,100%)!important}
+}
+@media(max-width:599px){
+ header{gap:7px!important;padding:0 10px!important}
+ header > button:first-child{font-size:14px!important;letter-spacing:-.02em!important}
+ header > button:nth-of-type(2){display:none!important}
+ header nav button{padding:8px 3px!important;min-width:30px}
+ main section[data-kf="hero"] h1{font-size:clamp(36px,11vw,46px)!important;line-height:1.02!important}
+ main section[data-kf]:not(#exploration):not([data-kf="bar"]):not([data-kf="end"]):not([data-kf="hero"]) > div{padding:18px 18px 20px!important}
+ main section[data-kf="bar"]{padding-bottom:48px!important}
+ main section[data-kf="bar"] > div:first-child{padding:76px 16px 26px!important;margin-bottom:28px!important}
+ main section[data-kf="bar"] > div:nth-child(2){padding:0 16px!important}
+ main section[data-kf="bar"] > div:nth-child(2) > div:first-child{gap:12px!important;margin-bottom:20px!important}
+ main section[data-kf="bar"] > div:nth-child(2) > p:first-of-type{margin-bottom:30px!important}
+ main section[data-kf="bar"] > div:nth-child(2) > div:nth-of-type(3){flex-direction:column;gap:6px!important}
+ main section[data-kf="end"]{padding:88px 12px 48px!important}
+ main section[data-kf="end"] > div{padding:20px 18px 24px!important}
+ #exploration > div{padding:18px!important}
+ #exploration #resultsSummary > div{padding:10px!important}
+ #exploration button{min-height:44px!important}
+ .data-details summary{min-height:44px;display:flex;align-items:center}
+}
+</style>
+</helmet>
+<a class="skip-link" href="#recit">Aller au récit</a>
+<a class="skip-link" href="#exploration">Aller à l'exploration des communes</a>
+<div style="position:relative;font-family:'Outfit',Arial,sans-serif;color:#002B59">
+<canvas ref="{{ canvasRef }}" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0"></canvas>
+<div ref="{{ capsRef }}" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:1">
+<sc-for list="{{ caps }}" as="c" hint-placeholder-count="0">
+<div data-cap="" style="position:absolute;left:0;top:0;opacity:0;display:flex;flex-direction:column;gap:5px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="cap-title" style="font-size:15px;font-weight:600;line-height:1.15">{{ c.t }}</span><span class="cap-badge" style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#CA1C60;border:1px solid #CA1C60;padding:1px 6px">Données réelles</span></div>
+<div class="cap-meta-full" style="font-size:12px;line-height:1.35;color:#114B8A">{{ c.meta }}</div>
+<div class="cap-meta-short">{{ c.metaShort }}</div>
+<div class="cap-legend" style="display:flex;align-items:center;gap:6px;font-size:11px;color:#114B8A"><span>{{ c.lo }}</span><div style="display:flex;gap:2px"><sc-for list="{{ c.sw }}" as="s" hint-placeholder-count="5"><span class="cap-swatch" style="background:{{ s.color }}"><span style="background:#FFFFFF;color:#002B59;padding:0 2px">{{ s.n }}</span></span></sc-for></div><span>{{ c.hi }}</span><span>{{ c.missing }}</span></div>
+<sc-if value="{{ c.sitesLegend }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.25;color:#002B59"><span aria-hidden="true" style="flex:none;width:12px;height:12px;border-radius:50%;background:#002B59;border:2px solid #FFFFFF;box-shadow:0 0 0 1px #002B59"></span><span><strong>1 point = 1 adresse d’exercice</strong>, pas un cardiologue unique · RPPS 2026</span></div></sc-if>
+</div>
+</sc-for>
+</div>
+<div ref="{{ tipRef }}" style="position:fixed;display:none;z-index:8;pointer-events:none;background:#FFFFFF;border:1.5px solid #002B59;padding:9px 11px;font-size:13px;line-height:1.45;max-width:260px;color:#002B59"></div>
+
+<header style="position:fixed;top:0;left:0;right:0;height:56px;z-index:7;background:#FFFFFF;border-bottom:1px solid #D5DEEA;display:flex;align-items:center;gap:16px;padding:0 20px">
+<button onClick="{{ goTop }}" style="appearance:none;border:0;background:none;padding:0;cursor:pointer;font-size:18px;font-weight:700;letter-spacing:-.01em;color:#002B59;white-space:nowrap">Adresse &amp; santé</button>
+<nav aria-label="Scènes" style="display:flex;align-items:center;gap:2px;margin:0 auto;overflow-x:auto;scrollbar-width:none">
+<sc-for list="{{ chapters }}" as="h" hint-placeholder-count="7">
+<button onClick="{{ h.go }}" aria-label="{{ h.label }}" aria-current="{{ h.cur }}" title="{{ h.label }}" style="appearance:none;border:0;background:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 6px;min-height:44px;color:#002B59;white-space:nowrap;font-size:13px;font-weight:500">
+<span style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;background:{{ h.bg }};color:{{ h.fg }};border:1.5px solid {{ h.bd }}">{{ h.n }}</span><span style="display:{{ h.lbl }}">{{ h.label }}</span></button>
+</sc-for>
+</nav>
+<button onClick="{{ goTop }}" style="appearance:none;border:1.5px solid #002B59;background:#FFFFFF;cursor:pointer;padding:0 12px;height:36px;font-size:13px;font-weight:500;color:#002B59;white-space:nowrap">↑ Début</button>
+<div ref="{{ progRef }}" style="position:absolute;left:0;bottom:-1px;height:3px;width:0;background:#CA1C60"></div>
+</header>
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;font-size:15px;color:#114B8A">{{ loadMsg }}</div></sc-if>
+
+<main id="recit" tabindex="-1" style="position:relative;z-index:2;pointer-events:none">
+
+<sc-if value="{{ immersive }}" hint-placeholder-val="{{ true }}">
+<section data-kf="hero" data-ch="0" data-screen-label="00 Ouverture immersive" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(560px,100%);color:#FFFFFF;padding:24px 0">
+<div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#FFC1D0;margin-bottom:18px">Inégalités sociales et territoriales de santé</div>
+<h1 style="margin:0 0 22px;font-size:clamp(48px,5.4vw,86px);line-height:.98;font-weight:700;letter-spacing:-.035em">Que nous apprend notre adresse sur notre santé&nbsp;?</h1>
+<p style="margin:0 0 14px;font-size:clamp(22px,2vw,30px);line-height:1.2;font-weight:600;color:#FFFFFF">Et que ne peut-elle pas nous dire&nbsp;?</p><p style="margin:0 0 18px;font-size:clamp(17px,1.3vw,20px);line-height:1.45;color:#DCE8FF;text-wrap:pretty">Une même adresse peut correspondre à plusieurs réalités de santé. Suivons ce que montrent les données, des cartes départementales jusqu’à une commune.</p>
+<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><span style="font-size:13px;font-weight:600;background:#CA1C60;color:#FFFFFF;padding:5px 10px">Données ouvertes · sources indiquées au fil du récit</span><span style="font-size:14px;color:#DCE8FF">Faites défiler ↓</span></div>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{ sobre }}" hint-placeholder-val="{{ false }}">
+<section data-kf="hero" data-ch="0" data-screen-label="00 Ouverture sobre" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(440px,100%);background:#FFFFFF;padding:24px 0">
+<div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#CA1C60;margin-bottom:16px">Inégalités sociales et territoriales de santé</div>
+<h1 style="margin:0 0 18px;font-size:clamp(46px,5vw,78px);line-height:1;font-weight:700;letter-spacing:-.03em">Que nous apprend notre adresse sur notre santé&nbsp;?</h1>
+<p style="margin:0 0 14px;font-size:clamp(22px,2vw,30px);line-height:1.2;font-weight:600;color:#002B59">Et que ne peut-elle pas nous dire&nbsp;?</p><p style="margin:0 0 18px;font-size:clamp(17px,1.3vw,20px);line-height:1.45;color:#114B8A;text-wrap:pretty">Une même adresse peut correspondre à plusieurs réalités de santé. Suivons ce que montrent les données, des cartes départementales jusqu’à une commune.</p>
+<div style="font-size:13.5px;color:#114B8A;border-top:1px solid #D5DEEA;padding-top:12px">Statistiques, cartes, lieux d’exercice et trajets calculés à partir de données ouvertes. Sources indiquées au fil du récit. Faites défiler ↓</div>
+</div>
+</section>
+</sc-if>
+
+<section data-kf="s1a" data-ch="1" data-screen-label="01 Diabète traité" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Carte des 96 départements de France hexagonale : le bleu devient plus foncé quand le taux de diabète traité augmente. Les valeurs exactes peuvent être recherchées par commune dans « Et chez vous ? », à la maille départementale.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">01</div><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#FFC1D0;margin-bottom:10px">Acte I · Ce que montre une carte</div><h2 style="margin:0 0 14px;font-size:clamp(56px,5.6vw,92px);line-height:.88;font-weight:700;letter-spacing:-.04em">Diabète traité</h2><p style="margin:0;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF">Traitement par médicament. Taux corrigé pour comparer des populations d’âges différents, en 2023, dans les 96 départements de France hexagonale.</p></div>
+</section>
+
+<section data-kf="s1b" data-ch="1" data-screen-label="01a Seine-Saint-Denis" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Seine-Saint-Denis · 2023</div><div style="font-size:clamp(56px,5vw,80px);line-height:.9;font-weight:700;letter-spacing:-.035em;color:#CA1C60;margin-bottom:12px">8,21&nbsp;%</div><p style="margin:0 0 .8em">En Seine-Saint-Denis, le taux de diabète traité est de 8,21&nbsp;% en 2023, après correction des différences d’âge.</p><p style="margin:0 0 .8em;font-size:14px;line-height:1.45;background:#F9EECA;color:#002B59;padding:8px 10px">Ce taux compte les personnes traitées. Il n'inclut pas les diabètes non diagnostiqués ou non traités.</p><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/diabete-prevalence-departement/" target="_blank" rel="noopener">Odissé, diabète par département</a></p></div>
+</section>
+
+<section data-kf="s1c" data-ch="1" data-screen-label="01b Il ne dit pas pourquoi" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#CA1C60;color:#FFFFFF;padding:22px 24px 26px;font-size:clamp(16px,1.2vw,18px);line-height:1.5;text-wrap:pretty"><p style="margin:0;font-size:clamp(28px,2.6vw,40px);line-height:1.1;font-weight:600;letter-spacing:-.015em;text-wrap:balance">Ce chiffre situe le département. Il n’explique pas à lui seul la situation.</p><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#FFFFFF;border-top:1px solid rgba(255,255,255,.5);padding-top:10px">→ Et si l'on regarde la situation sociale des territoires&nbsp;?</p></div>
+</section>
+
+<section data-kf="s2a" data-ch="2" data-screen-label="02 Pauvreté" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : La même carte départementale affiche maintenant le taux de pauvreté. Les teintes plus foncées correspondent aux taux plus élevés.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">02</div><h2 style="margin:0 0 14px;font-size:clamp(30px,2.8vw,42px);line-height:1.02;font-weight:600;letter-spacing:-.02em">Une autre carte</h2><p style="margin:0 0 .8em;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF;text-wrap:pretty">La Seine-Saint-Denis se distingue aussi par son taux de pauvreté. Ailleurs, les deux cartes ne se recouvrent pas toujours.</p><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:clamp(44px,4vw,64px);line-height:.9;font-weight:700;letter-spacing:-.03em;color:#FFC1D0">29,5&nbsp;%</span><span style="font-size:16px;color:#DCE8FF">en Seine-Saint-Denis</span></div><p style="margin:14px 0 0;font-size:13.5px;color:#DCE8FF">Source&nbsp;: <a href="https://www.insee.fr/fr/statistiques/8984752" target="_blank" rel="noopener" style="color:#FFC1D0">Insee, Filosofi</a></p></div>
+</section>
+
+<section data-kf="s2b" data-ch="2" data-screen-label="02a Recoupement partiel" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Deux cartes côte à côte comparent diabète traité et pauvreté. Les profils ne se superposent que partiellement ; les exemples chiffrés figurent dans le texte qui suit.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Diabète et pauvreté, côte à côte</div><div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span style="font-size:clamp(56px,5vw,84px);line-height:.85;font-weight:700;letter-spacing:-.04em;color:#CA1C60">9</span><span style="font-size:clamp(20px,1.8vw,26px);font-weight:600">départements sur 20 en commun</span></div><p style="margin:0 0 .9em;font-size:15px;line-height:1.45;color:#114B8A">Parmi les 20 départements hexagonaux les plus élevés pour chacune des deux mesures.</p><p style="margin:0 0 .9em">Les cartes se recoupent en partie. En Seine-Saint-Denis, pauvreté et diabète traité sont élevés. Les Pyrénées-Orientales montrent un autre profil&nbsp;: 22,4&nbsp;% de pauvreté, 5,04&nbsp;% de diabète traité.</p><p style="margin:0 0 .8em;font-size:14px;line-height:1.45;background:#F9EECA;color:#002B59;padding:8px 10px">Ces taux départementaux ne disent pas quels habitants sont touchés.</p><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#114B8A;border-top:1px solid #D5DEEA;padding-top:10px">→ Le diabète déclaré est-il plus fréquent chez les personnes en difficulté financière&nbsp;?</p></div>
+</section>
+
+<section data-kf="bar" data-ch="3" data-screen-label="03 Aux personnes" style="pointer-events:auto;position:relative;background:#FFFFFF;min-height:100vh;padding:0 0 96px" tabindex="-1">
+<div style="background:#002B59;color:#FFFFFF;padding:96px 24px 40px;margin-bottom:56px"><div style="max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span style="font-size:clamp(28px,3vw,46px);font-weight:700;letter-spacing:-.02em">Enquête nationale · personnes de 18 à 79 ans</span></div></div>
+<div style="max-width:1080px;margin:0 auto;padding:0 24px">
+<div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:28px">
+<div style="font-size:clamp(72px,9vw,140px);font-weight:300;line-height:.8;color:#CA1C60;letter-spacing:-.04em">03</div>
+<h2 style="margin:0;flex:1 1 360px;font-size:clamp(32px,3.6vw,56px);line-height:1;font-weight:600;letter-spacing:-.025em">Des territoires aux personnes</h2>
+</div>
+<p style="margin:0 0 56px;max-width:620px;font-size:clamp(17px,1.3vw,19px);line-height:1.55;text-wrap:pretty">Dans l'enquête nationale, 9,3&nbsp;% des personnes déclarant des difficultés financières disent avoir un diabète, contre 4,5&nbsp;% de celles se disant à l'aise.</p>
+<div style="display:flex;flex-direction:column;gap:36px;margin-bottom:44px">
+<div style="display:grid;grid-template-columns:minmax(0,1fr);gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font-size:clamp(18px,1.4vw,21px);font-weight:500">Vous êtes à l’aise</span><span style="font-size:clamp(36px,3.4vw,52px);font-weight:700;line-height:1;letter-spacing:-.02em">4,5&nbsp;%</span></div>
+<div style="height:44px;background:#EDF1F7;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:45%;background:#114B8A"></div></div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr);gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font-size:clamp(18px,1.4vw,21px);font-weight:500;color:#CA1C60">Vous y arrivez difficilement ou vous ne pouvez pas y arriver sans faire de dette</span><span style="font-size:clamp(36px,3.4vw,52px);font-weight:700;line-height:1;letter-spacing:-.02em;color:#CA1C60">9,3&nbsp;%</span></div>
+<div style="height:44px;background:#EDF1F7;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:93%;background:#CA1C60"></div></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:#114B8A"><span>0&nbsp;%</span><span>10&nbsp;%</span></div>
+</div>
+<div style="display:flex;gap:14px;align-items:flex-start;background:#F9EECA;padding:16px 18px;max-width:720px">
+<div style="flex:none;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding-top:2px">À lire</div>
+<p style="margin:0;font-size:clamp(16px,1.2vw,18px);line-height:1.5">Adultes de 18 à 79 ans, France hexagonale et quatre départements ultramarins (hors Mayotte).<br><strong>Diabète déclaré</strong>&nbsp;: ce n’est pas le même indicateur que le diabète traité de la première carte. Ces deux groupes ne sont pas comparés à âge égal.</p>
+</div>
+<p style="margin:16px 0 0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/diabete-indicateurs-du-barometre-2024/" target="_blank" rel="noopener">Baromètre Santé publique France 2024, Odissé</a></p>
+<p style="margin:40px 0 0;font-size:clamp(20px,1.7vw,26px);line-height:1.3;font-weight:600;color:#CA1C60;max-width:720px">→ Ces écarts existent-ils seulement quand la maladie est déjà installée&nbsp;?</p>
+</div>
+</section>
+
+<section data-kf="s4a" data-ch="4" data-screen-label="04 Grossesse" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">04</div><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#FFC1D0;margin-bottom:10px">Acte II · Le constat change selon le moment et l’acte observé</div><h2 style="margin:0 0 14px;font-size:clamp(30px,2.8vw,42px);line-height:1.02;font-weight:600;letter-spacing:-.02em">Autre moment de vie&nbsp;: la grossesse</h2><p style="margin:0;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF;text-wrap:pretty">En 2024, la Seine-Saint-Denis, la Haute-Marne, le Finistère et la Guyane présentent des profils différents autour de la grossesse.</p></div>
+</section>
+
+<section data-kf="s4b" data-ch="4" data-screen-label="04a AME ou C2S" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Le graphique compare quatre territoires sur trois indicateurs périnataux : couverture sociale, entretien prénatal précoce et prématurité. Le tableau des douze valeurs est disponible à la fin de cette séquence.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Colonne 1 · couverture sociale</div><p style="margin:0 0 .8em">Part des femmes ayant accouché couvertes par l’aide médicale de l’État (AME) ou par la complémentaire santé solidaire gratuite (C2S).</p><p style="margin:0 0 .8em;font-size:14px;line-height:1.45;background:#F9EECA;color:#002B59;padding:8px 10px">Cette mesure décrit une couverture sociale. Elle ne donne ni le revenu des femmes ni la qualité de leur suivi.</p><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/perinatalite-donnees-socio-demographiques-departement/" target="_blank" rel="noopener">Odissé, situation sociale</a></p></div>
+</section>
+
+<section data-kf="s4c" data-ch="4" data-screen-label="04b Entretien prénatal" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Colonne 2 · entretien prénatal précoce</div><div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:12px"><div><div style="font-size:clamp(40px,3.6vw,56px);font-weight:700;line-height:.9;letter-spacing:-.03em;color:#CA1C60">33,5&nbsp;%</div><div style="font-size:14px;margin-top:6px">Seine-Saint-Denis</div></div><div><div style="font-size:clamp(40px,3.6vw,56px);font-weight:700;line-height:.9;letter-spacing:-.03em">80,7&nbsp;%</div><div style="font-size:14px;margin-top:6px">Finistère</div></div></div><p style="margin:0 0 .8em">Le suivi n'a pas la même fréquence partout. En 2024, l'entretien prénatal précoce concerne 33,5&nbsp;% des femmes comptées en Seine-Saint-Denis et 80,7&nbsp;% dans le Finistère.</p><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/grossesse-dep/" target="_blank" rel="noopener">Odissé, suivi de grossesse</a></p></div>
+</section>
+
+<section data-kf="s4d" data-ch="4" data-screen-label="04c Prématurité" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Colonne 3 · naissances prématurées</div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap"><span style="font-size:clamp(48px,4.4vw,68px);font-weight:700;line-height:.9;letter-spacing:-.03em;color:#CA1C60">10,4&nbsp;%</span><span style="font-size:16px;font-weight:600">en Haute-Marne</span></div><p style="margin:0 0 .8em">La Haute-Marne atteint 10,4&nbsp;%, alors que sa part de bénéficiaires AME/C2S gratuite, 16,9&nbsp;%, n'est pas celle de la Guyane, 64,6&nbsp;%.</p><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/perinatalite-prematurite-departement/" target="_blank" rel="noopener">Odissé, prématurité</a></p></div>
+</section>
+
+<section data-kf="s4e" data-ch="4" data-screen-label="04d Ce qu'on ne peut pas déduire" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Trois mesures côte à côte</div><p style="margin:0 0 .6em;font-size:clamp(19px,1.5vw,22px);line-height:1.35;font-weight:600">L’entretien prénatal précoce est beaucoup plus fréquent dans le Finistère (80,7&nbsp;%) qu’en Seine-Saint-Denis (33,5&nbsp;%). Pourtant, ces quatre départements ne dessinent pas une relation simple avec la prématurité&nbsp;: la Haute-Marne atteint 10,4&nbsp;% de naissances prématurées. Ces chiffres ne permettent pas d’attribuer une naissance prématurée à une seule caractéristique du département.</p><p style="margin:0;font-size:13px;line-height:1.45;color:#114B8A">Taux périnataux bruts. L'entretien prénatal a une population éligible spécifique et n'est pas calculé pour Mayotte.</p><details class="data-details"><summary>Lire les 12 valeurs du graphique</summary><div class="data-table-wrap"><table class="data-table"><caption class="sr-only">Quatre territoires, trois indicateurs périnataux en 2024</caption><thead><tr><th scope="col">Territoire</th><th scope="col">AME/C2S gratuite</th><th scope="col">Entretien prénatal</th><th scope="col">Prématurité</th></tr></thead><tbody><tr><th scope="row">Seine-Saint-Denis</th><td>27,3 %</td><td>33,5 %</td><td>7,1 %</td></tr><tr><th scope="row">Haute-Marne</th><td>16,9 %</td><td>43,1 %</td><td>10,4 %</td></tr><tr><th scope="row">Finistère</th><td>10,3 %</td><td>80,7 %</td><td>6,0 %</td></tr><tr><th scope="row">Guyane</th><td>64,6 %</td><td>38,9 %</td><td>11,3 %</td></tr></tbody></table></div></details><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#114B8A;border-top:1px solid #D5DEEA;padding-top:10px">→ La prévention dessine-t-elle une carte plus uniforme&nbsp;?</p></div>
+</section>
+
+<section data-kf="s5a" data-ch="5" data-screen-label="05 Prévention" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Carte des départements pour la couverture vaccinale HPV complète des filles de 16 ans. La Somme est repérée sur la carte ; sa valeur et son rang figurent dans le texte.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">05</div><h2 style="margin:0 0 14px;font-size:clamp(30px,2.8vw,42px);line-height:1.02;font-weight:600;letter-spacing:-.02em">Prévention&nbsp;: le cas de la Somme</h2><p style="margin:0 0 1em;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF">Un département se situe-t-il au même rang pour toutes les actions de prévention&nbsp;? Suivons la Somme dans trois programmes différents, dont la vaccination contre les papillomavirus (HPV).</p><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:clamp(44px,4vw,64px);line-height:.9;font-weight:700;letter-spacing:-.03em;color:#FFC1D0">14e</span><span style="font-size:16px;color:#DCE8FF">sur 96 · couverture HPV complète des filles à 16 ans, 61,6&nbsp;% en 2025</span></div><p style="margin:14px 0 0;font-size:13.5px;color:#DCE8FF">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/couvertures-vaccinales-des-adolescent-et-adultes-departement/" target="_blank" rel="noopener" style="color:#FFC1D0">Odissé, HPV</a></p></div>
+</section>
+
+<section data-kf="s5b" data-ch="5" data-screen-label="05a Sein" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Somme · dépistage organisé du sein</div><div style="display:flex;flex-direction:column;gap:12px;margin:4px 0 12px"><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">HPV des filles, 2025</span><span><span style="font-weight:700;color:#CA1C60">14e</span> <span style="color:#114B8A">· 61,6 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:13.7%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">Dépistage du sein, 2024–2025</span><span><span style="font-weight:700;color:#CA1C60">22e</span> <span style="color:#114B8A">· 52,6 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:22.6%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">Dépistage colorectal, 2024–2025</span><span><span style="font-weight:700;color:#CA1C60">88e</span> <span style="color:#114B8A">· 27,0 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:93.5%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#114B8A"><span>1er (taux le plus élevé)</span><span>Taux le plus bas</span></div></div><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/cancer-participation-au-depistage-organise-du-cancer-du-sein_dep/" target="_blank" rel="noopener">Odissé, dépistage du sein</a></p></div>
+</section>
+
+<section data-kf="s5c" data-ch="5" data-screen-label="05b Colorectal" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Somme · dépistage organisé colorectal</div><div style="display:flex;flex-direction:column;gap:12px;margin:4px 0 12px"><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">HPV des filles, 2025</span><span><span style="font-weight:700;color:#CA1C60">14e</span> <span style="color:#114B8A">· 61,6 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:13.7%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">Dépistage du sein, 2024–2025</span><span><span style="font-weight:700;color:#CA1C60">22e</span> <span style="color:#114B8A">· 52,6 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:22.6%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;flex-direction:column;gap:5px;opacity:1"><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span style="font-weight:600">Dépistage colorectal, 2024–2025</span><span><span style="font-weight:700;color:#CA1C60">88e</span> <span style="color:#114B8A">· 27,0 %</span></span></div><div style="position:relative;height:14px"><div style="position:absolute;left:0;right:0;top:3px;height:8px;background:repeating-linear-gradient(90deg,#96BBFF 0 2px,transparent 2px 100%);background-size:2% 100%"></div><div style="position:absolute;top:0;left:93.5%;width:4px;height:14px;margin-left:-1px;background:#CA1C60"></div></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#114B8A"><span>1er (taux le plus élevé)</span><span>Taux le plus bas</span></div></div><p style="margin:0;font-size:13.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/cancer-participation-au-depistage-organise-du-cancer-du-colon-rectum-departement-copie/" target="_blank" rel="noopener">Odissé, dépistage colorectal</a></p></div>
+</section>
+
+<section data-kf="s5d" data-ch="5" data-screen-label="05c Trois cartes" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Trois cartes comparent séparément HPV, dépistage du sein et dépistage colorectal. Les rangs de la Somme changent fortement entre ces trois actions ; ils sont écrits dans le texte.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Trois cartes, trois préventions</div><p style="margin:0 0 .6em;font-size:clamp(19px,1.5vw,22px);line-height:1.35;font-weight:600">La Somme ne se situe pas au même rang pour les trois mesures : 14e pour la couverture HPV des filles, 22e pour le dépistage du sein, 88e pour le colorectal. Selon l'action observée, son rang passe du haut au bas du tableau.</p><p style="margin:0 0 .4em;font-size:13px;line-height:1.45;color:#114B8A">Rangs calculés parmi 96 départements pour le HPV et 94 pour les deux dépistages. Les valeurs corses des dépistages ne sont pas attribuables séparément à 2A et 2B. Chaque carte classe ses départements en cinq groupes d’environ 20 % chacun ; âges, sexes, périodes et actes diffèrent.</p><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#114B8A;border-top:1px solid #D5DEEA;padding-top:10px">→ À l’intérieur d’un département, les communes peuvent aussi présenter de fortes différences.</p></div>
+</section>
+
+<section data-kf="s6a" data-ch="6" data-screen-label="06 F-EDI à la commune" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Zoom sur les onze communes des Giennoises. La carte classe chaque commune en cinq groupes de situation sociale, du plus favorisé au plus défavorisé. Le tableau communal figure dans la séquence suivante.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">06</div><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#FFC1D0;margin-bottom:10px">Acte III · À l’intérieur d’un territoire</div><h2 style="margin:0 0 14px;font-size:clamp(30px,2.8vw,42px);line-height:1.02;font-weight:600;letter-spacing:-.02em">Onze communes, plusieurs contextes sociaux</h2><p style="margin:0 0 .8em;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF;text-wrap:pretty">Nous entrons dans la communauté de communes Giennoises. Le F-EDI, un indice de défavorisation sociale publié par Odissé, décrit le contexte de chaque commune en 2021. Les couleurs la situent par rapport aux autres communes de France.</p></div>
+</section>
+
+<section data-kf="s6b" data-ch="6" data-screen-label="06a Des communes différentes" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.5;text-wrap:pretty">
+<div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Même intercommunalité · cinq groupes de communes</div>
+<p style="margin:0 0 12px;font-size:clamp(19px,1.5vw,22px);line-height:1.35;font-weight:600">Gien et Coullons figurent dans les 20&nbsp;% des communes les plus défavorisées selon le F-EDI. Boismorand et Le Moulinet-sur-Solin figurent dans les 20&nbsp;% les plus favorisées.</p>
+<p style="margin:0 0 10px;font-size:14px;color:#114B8A">Le contour souligne les 11 communes des Giennoises. Les cinq couleurs répartissent les communes de France en groupes d’environ 20 % chacun, des plus favorisées aux plus défavorisées. Ce n’est pas un classement interne aux Giennoises.</p>
+<p style="margin:0 0 10px;font-size:13px;line-height:1.45;background:#F9EECA;color:#002B59;padding:8px 10px">Cet indice décrit le contexte d’une commune. Il ne renseigne pas sur la situation sociale de chaque personne qui y habite.</p>
+<p style="margin:0;font-size:12.5px;color:#114B8A">Source&nbsp;: <a href="https://odisse.santepubliquefrance.fr/explore/assets/french-european-deprivation-index-f-edi-2021-par-commune/" target="_blank" rel="noopener">Odissé, F-EDI 2021 par commune</a></p>
+</div>
+</section>
+
+<section data-kf="s6c" data-ch="6" data-screen-label="06b De F-EDI à APL" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Les mêmes communes sont maintenant colorées selon leur accès potentiel à un cardiologue. Le tableau « Voir les 11 communes et leurs valeurs » fournit une version textuelle de cette carte.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#CA1C60;color:#FFFFFF;padding:22px 24px 26px;font-size:clamp(16px,1.2vw,18px);line-height:1.5;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px">Même carte · autre dimension</div><div style="font-size:clamp(34px,3vw,48px);line-height:1;font-weight:700;letter-spacing:-.02em;margin-bottom:14px">Et l’accès aux soins&nbsp;?</div><p style="margin:0 0 .9em">Dans les Giennoises, l’accès potentiel à un cardiologue varie lui aussi d’une commune à l’autre.</p><div style="background:#FFFFFF;color:#002B59;padding:10px 12px;font-size:14px;line-height:1.45"><strong>De 5,75 à 9,50</strong> contacts potentiellement accessibles par an pour 100 habitants dans les 11 communes. <strong>À Gien&nbsp;: 6,64.</strong></div><p style="margin:.8em 0 0;font-size:13px">L’accès potentiel à un cardiologue (APL), calculé pour 2019, ne donne ni un temps de trajet ni le nombre de consultations effectivement obtenues. Les couleurs sont classées parmi les communes des deux zooms locaux ; le tableau ci-dessous concerne les 11 communes des Giennoises.</p><details class="data-details"><summary>Voir les 11 communes et leurs valeurs</summary><div class="data-table-wrap"><table class="data-table"><caption class="sr-only">Situation sociale en 2021 et accès potentiel à un cardiologue en 2019 dans les communes des Giennoises</caption><thead><tr><th scope="col">Commune</th><th scope="col">Situation sociale</th><th scope="col">Accès cardio*</th></tr></thead><tbody><tr><th scope="row">Boismorand</th><td>Plus favorisée</td><td>9,50</td></tr><tr><th scope="row">Coullons</th><td>Plus défavorisée</td><td>5,75</td></tr><tr><th scope="row">Gien</th><td>Plus défavorisée</td><td>6,64</td></tr><tr><th scope="row">Langesse</th><td>Groupe central</td><td>7,94</td></tr><tr><th scope="row">Le Moulinet-sur-Solin</th><td>Plus favorisée</td><td>7,94</td></tr><tr><th scope="row">Les Choux</th><td>Groupe central</td><td>8,21</td></tr><tr><th scope="row">Nevoy</th><td>Plutôt favorisée</td><td>6,35</td></tr><tr><th scope="row">Poilly-lez-Gien</th><td>Groupe central</td><td>6,35</td></tr><tr><th scope="row">Saint-Brisson-sur-Loire</th><td>Groupe central</td><td>6,16</td></tr><tr><th scope="row">Saint-Gondon</th><td>Plutôt favorisée</td><td>5,75</td></tr><tr><th scope="row">Saint-Martin-sur-Ocre</th><td>Plutôt favorisée</td><td>6,16</td></tr></tbody></table></div><p style="font-size:11px;line-height:1.35;margin:6px 0 0">* Contacts potentiellement accessibles par an pour 100 habitants. Les cinq groupes de situation sociale représentent chacun environ 20 % des communes ayant une valeur.</p></details><p style="margin:.8em 0 0;font-size:12px">Source&nbsp;: <a href="https://www.data.gouv.fr/datasets/accessibilite-potentielle-localisee-apl-en-cardiologie-france-irdes" target="_blank" rel="noopener" style="color:#FFFFFF;text-decoration:underline">fichier APL Irdes republié</a>.</p><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#FFFFFF;border-top:1px solid rgba(255,255,255,.5);padding-top:10px">→ Que peut-on atteindre depuis un lieu précis&nbsp;?</p></div>
+</section>
+
+<section data-kf="s7a" data-ch="7" data-screen-label="07 Zoom local" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(420px,100%);background:#002B59;color:#FFFFFF;padding:26px 26px 30px"><div style="font-size:72px;font-weight:300;line-height:1;color:#FFC1D0;letter-spacing:-.03em;margin-bottom:14px">07</div><h2 style="margin:0 0 14px;font-size:clamp(30px,2.8vw,42px);line-height:1.02;font-weight:600;letter-spacing:-.02em">Du potentiel au trajet</h2><p style="margin:0 0 .8em;font-size:clamp(16px,1.2vw,18px);line-height:1.55;color:#DCE8FF;text-wrap:pretty">L’accès potentiel est une estimation de 2019. Pour situer des lieux concrets, regardons les adresses d’exercice recensées en 2026 autour de Gien.</p><p style="margin:0;font-size:13.5px;color:#FFC1D0">Couleurs&nbsp;: accès potentiel à un cardiologue en 2019. Un point représente une adresse d’exercice RPPS en 2026, pas un cardiologue unique.</p></div>
+</section>
+
+<section data-kf="s7b" data-ch="7" data-screen-label="07a Lieux" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Des points repèrent des adresses d’exercice de cardiologie recensées autour de Gien ; un point correspond à une adresse, et non à un praticien unique. Les limites de cette liste et le lieu le plus proche retenu sont indiqués dans le texte.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#FFFFFF;padding:22px 24px 24px;border-top:3px solid #002B59;font-size:clamp(16px,1.2vw,18px);line-height:1.55;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60;margin-bottom:10px">Adresses d’exercice recensées</div><p style="margin:0 0 .6em;font-size:clamp(19px,1.5vw,22px);line-height:1.35;font-weight:600">Chaque point marque une adresse d’exercice, pas un cardiologue unique. Plusieurs praticiens peuvent être inscrits à la même adresse ; plusieurs adresses peuvent aussi se superposer sur la carte.</p><p style="margin:0;font-size:13.5px;color:#114B8A">59 adresses RPPS sélectionnées et géocodées sont affichées dans la région. Ce n’est pas un inventaire exhaustif des cardiologues. Aucun lieu d’exercice cardiologique n’a d’adresse à Gien dans l’extrait RPPS utilisé&nbsp;: l’absence de point ne prouve pas l’absence de toute consultation. Les points sur fond clair sont hors de la zone dont les communes sont coloriées&nbsp;; ce fond ne signifie pas qu’il n’y a pas de soins. Le lieu retenu le plus proche du centre de Gien est à La Bussière&nbsp;: 15,2 min par la route estimée. Une adresse recensée ne garantit pas un rendez-vous disponible.</p></div>
+</section>
+
+<sc-if value="{{ isoOn }}" hint-placeholder-val="{{ true }}">
+<section data-kf="s7c" data-ch="7" data-screen-label="07b 15 et 30 min" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Les premiers contours de temps de trajet routier apparaissent autour du centre de Gien, pour 15 et 30 minutes. Le trajet vers le lieu retenu le plus proche est décrit dans le texte.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#CA1C60;color:#FFFFFF;padding:22px 24px 26px;font-size:clamp(16px,1.2vw,18px);line-height:1.5;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px">Le trajet</div><div style="font-size:clamp(56px,5.6vw,88px);line-height:.88;font-weight:700;letter-spacing:-.035em;margin-bottom:16px">15,2 minutes</div><p style="margin:0 0 .8em">Depuis le centre de Gien, le lieu d’exercice recensé le plus proche retenu ici — 9 rue du Château, à La Bussière — se rejoint en environ 15 minutes en voiture dans le calcul routier.</p><p style="margin:0;font-size:13.5px;background:#FFFFFF;color:#002B59;padding:8px 10px">Estimation Valhalla sur le réseau OpenStreetMap, sans trafic en temps réel. Un lieu recensé ne garantit pas qu’il accepte de nouveaux patients.</p></div>
+</section>
+
+<section data-kf="s7d" data-ch="7" data-screen-label="07c 15 à 60 min" style="min-height:100vh;display:flex;align-items:{{ stepAlign }};padding:{{ stepPad }}" tabindex="-1">
+<p class="sr-only">Description de la visualisation : Quatre contours de tracés différents montrent l’étendue des trajets routiers possibles depuis le centre de Gien. La légende les identifie à 15, 30, 45 et 60 minutes. Ils traversent les limites administratives.</p>
+<div style="pointer-events:auto;width:min(420px,100%);background:#CA1C60;color:#FFFFFF;padding:22px 24px 26px;font-size:clamp(16px,1.2vw,18px);line-height:1.5;text-wrap:pretty"><div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px">Le trajet</div><div class="isochrone-title" style="font-size:clamp(34px,3.8vw,42px);line-height:1;font-weight:700;letter-spacing:-.05em;margin-bottom:16px;white-space:nowrap">15 · 30 · 45 · 60 min</div><p style="margin:0 0 .9em">Ces contours partent du centre statistique de Gien et montrent les lieux atteignables en voiture en 15, 30, 45 ou 60 minutes. Ils suivent le réseau routier et franchissent les frontières administratives.</p><div style="display:flex;flex-wrap:wrap;gap:8px 12px;margin:0 0 .8em;font-size:12px;font-weight:600"><span class="iso-key"><svg width="28" height="8" aria-hidden="true" focusable="false"><path d="M0 4H28" stroke="#CA1C60" stroke-width="3"/></svg>15 min</span><span class="iso-key"><svg width="28" height="8" aria-hidden="true" focusable="false"><path d="M0 4H28" stroke="#B5552F" stroke-width="3" stroke-dasharray="8 4"/></svg>30 min</span><span class="iso-key"><svg width="28" height="8" aria-hidden="true" focusable="false"><path d="M0 4H28" stroke="#2F8A93" stroke-width="3" stroke-dasharray="2 4"/></svg>45 min</span><span class="iso-key"><svg width="28" height="8" aria-hidden="true" focusable="false"><path d="M0 4H28" stroke="#002B59" stroke-width="3" stroke-dasharray="12 4 2 4"/></svg>60 min</span></div><p style="margin:0;font-size:14px;line-height:1.45;background:#FFFFFF;color:#002B59;padding:8px 10px;font-weight:600">Zones de temps de trajet calculées depuis le centre de Gien sur le réseau OpenStreetMap, en voiture, sans trafic en temps réel. Elles ne représentent pas le trajet depuis chaque domicile.</p><p style="margin:.9em 0 0;font-size:15px;line-height:1.4;font-weight:600;color:#FFFFFF;border-top:1px solid rgba(255,255,255,.5);padding-top:10px">→ Et autour de chez vous&nbsp;?</p></div>
+</section>
+
+</sc-if>
+
+<section id="exploration" data-kf="explore" data-ch="8" data-screen-label="08 Et chez vous" style="min-height:100vh;display:flex;align-items:flex-start;padding:{{ explorePad }}" tabindex="-1">
+<div style="pointer-events:auto;width:min(440px,100%);background:#FFFFFF;border-top:3px solid #002B59;padding:22px 24px 26px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;align-items:flex-end;gap:14px"><h2 tabindex="-1" style="margin:0;font-size:clamp(30px,2.6vw,40px);line-height:1;font-weight:600;letter-spacing:-.02em">Et chez vous&nbsp;?</h2></div>
+<p style="margin:0;font-size:15.5px;line-height:1.5;text-wrap:pretty">{{ compareInstruction }}</p>
+<p class="sr-only" role="status" aria-live="polite" aria-atomic="true">{{ exploreAnnouncement }}</p>
+<p style="margin:-10px 0 0;font-size:12.5px;line-height:1.4;color:#526D89">La carte se recentre autour de la commune et montre son voisinage à l’échelle de l’indicateur. Son contour n’est dessiné que dans le zoom local ; chaque chiffre garde sa maille d’origine.</p>
+<sc-if value="{{ sameEpci }}" hint-placeholder-val="{{ false }}"><p id="comparisonNote" style="margin:-10px 0 0;padding:8px 10px;background:#F9EECA;font-size:12.5px;line-height:1.35">Ces communes appartiennent à la même intercommunalité : leur taux cardio est identique. La situation sociale et l’accès potentiel à un cardiologue restent mesurés commune par commune. Choisissez l’une de ces deux cartes lorsqu’elle est disponible.</p></sc-if>
+<sc-if value="{{ mobileCompare }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Commune visible sur la carte</div><div role="group" aria-label="Commune visible sur la carte" style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ mobileMapBtns }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="appearance:none;border:1.5px solid #002B59;background:{{ b.bg }};color:{{ b.fg }};padding:8px 10px;min-height:44px;cursor:pointer;font-size:13px;font-weight:600">{{ b.label }}</button></sc-for></div></div></sc-if>
+<p style="margin:-10px 0 0;font-size:12.5px;line-height:1.4;color:#114B8A">Les cinq nuances vont d'une valeur faible à une valeur élevée. Les chiffres exacts et leur échelle restent lisibles dans les fiches ci-dessous.</p>
+<sc-if value="{{ hasSummary }}" hint-placeholder-val="{{ false }}">
+<div id="resultsSummary" role="region" aria-label="Résultats des communes sélectionnées" tabindex="-1" style="display:grid;grid-template-columns:repeat({{ summaryCols }},minmax(0,1fr));gap:8px">
+<sc-for list="{{ summaries }}" as="card" hint-placeholder-count="0">
+<div style="border:1px solid #D5DEEA;border-top:3px solid {{ card.color }};padding:10px 12px;background:#FFFFFF;min-width:0">
+<div style="font-size:15px;font-weight:700;color:#002B59;margin-bottom:7px;overflow-wrap:anywhere">{{ card.name }}</div>
+<sc-for list="{{ card.rows }}" as="row" hint-placeholder-count="5">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-top:1px solid #EEF1F5;padding:6px 0">
+<div style="font-size:12px;line-height:1.2;color:#114B8A">{{ row.label }}<div style="font-size:11px;color:#526D89;margin-top:2px">{{ row.meta }}</div></div>
+<div style="font-size:14px;line-height:1.2;font-weight:700;color:{{ card.color }};text-align:right;white-space:{{ row.whiteSpace }};overflow-wrap:anywhere">{{ row.value }}</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ outsideMap }}" hint-placeholder-val="{{ false }}"><p style="margin:-10px 0 0;padding:8px 10px;background:#F9EECA;font-size:12.5px;line-height:1.4">La carte détaillée couvre la France hexagonale. Pour la commune sélectionnée hors de ce fond, seuls les chiffres disponibles dans les tableaux sont affichés&nbsp;; aucune couleur n'est attribuée à sa position.</p></sc-if>
+<sc-if value="{{ hasSummary }}" hint-placeholder-val="{{ false }}"><p style="margin:-10px 0 0;font-size:11.5px;line-height:1.4;color:#526D89">Situation sociale (F-EDI)&nbsp;: cinq groupes de communes, des plus favorisées aux plus défavorisées. Cet indice décrit le territoire, pas chaque habitant.</p></sc-if>
+<sc-if value="{{ plmNote }}" hint-placeholder-val="{{ false }}"><p style="margin:-10px 0 0;font-size:12px;line-height:1.4;color:#526D89">Paris, Lyon et Marseille&nbsp;: F-EDI et APL sont publiés à l’arrondissement dans les fichiers utilisés. Aucune valeur communale n’est reconstituée ici.</p></sc-if>
+<sc-if value="{{ noSelA }}" hint-placeholder-val="{{ true }}"><div style="padding:9px 11px;background:#EEF4FF;color:#114B8A;font-size:12.5px;line-height:1.4">Les chiffres apparaîtront ici, avec leur échelle indiquée. La carte se recentrera autour de la commune choisie.</div></sc-if>
+<div style="display:flex;flex-direction:column;gap:8px">
+<label for="qa" style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#CA1C60"></span>Votre commune</label>
+<input id="qa" type="search" autocomplete="off" aria-describedby="searchHelp" value="{{ qa }}" onChange="{{ onQa }}" onKeyDown="{{ onQaKey }}" placeholder="Ex. Saint-Denis, Gien, Abbeville…" style="height:48px;border:2px solid #002B59;padding:0 14px;font-size:17px;color:#002B59;outline-color:#CA1C60;width:100%">
+<span id="searchHelp" class="sr-only">Saisissez au moins deux lettres. Utilisez Flèche bas ou Tab pour parcourir les suggestions, Entrée pour choisir la première, Échap pour fermer la liste.</span>
+<span class="sr-only" role="status" aria-live="polite">{{ searchCountA }}</span>
+<sc-if value="{{ hasSearchErrorA }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin:0;color:#9B164A;font-size:13px">{{ searchErrorA }}</p></sc-if>
+<sc-if value="{{ hasResA }}" hint-placeholder-val="{{ false }}">
+<div id="suggestionsA" role="group" aria-label="Suggestions de communes" style="display:flex;flex-direction:column;border:1.5px solid #002B59;border-top:0">
+<sc-for list="{{ resA }}" as="r" hint-placeholder-count="0">
+<button onClick="{{ r.pick }}" style="appearance:none;border:0;border-bottom:1px solid #D5DEEA;background:#FFFFFF;text-align:left;padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;min-height:44px;align-items:center" style-hover="background:#EEF4FF"><span style="font-size:16px;font-weight:500;color:#002B59">{{ r.label }}</span><span style="font-size:12.5px;color:#114B8A">{{ r.sub }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ noSelA }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:#114B8A"><span>Essayer&nbsp;:</span>
+<button onClick="{{ trySD }}" style="appearance:none;border:1px solid #96BBFF;background:#FFFFFF;padding:6px 10px;min-height:36px;cursor:pointer;font-size:13.5px;color:#002B59">Saint-Denis (93)</button>
+<button onClick="{{ tryAmiens }}" style="appearance:none;border:1px solid #96BBFF;background:#FFFFFF;padding:6px 10px;min-height:36px;cursor:pointer;font-size:13.5px;color:#002B59">Amiens</button>
+<button onClick="{{ tryGien }}" style="appearance:none;border:1px solid #96BBFF;background:#FFFFFF;padding:6px 10px;min-height:36px;cursor:pointer;font-size:13.5px;color:#002B59">Gien</button>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ hasSelA }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<label for="qb" style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border:2.5px solid #002B59;border-radius:50%"></span>Comparer avec</label>
+<input id="qb" type="search" autocomplete="off" aria-describedby="searchHelp" value="{{ qb }}" onChange="{{ onQb }}" onKeyDown="{{ onQbKey }}" placeholder="Une autre commune" style="height:44px;border:1.5px solid #002B59;padding:0 14px;font-size:16px;color:#002B59;outline-color:#CA1C60;width:100%">
+<span class="sr-only" role="status" aria-live="polite">{{ searchCountB }}</span>
+<sc-if value="{{ hasSearchErrorB }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin:0;color:#9B164A;font-size:13px">{{ searchErrorB }}</p></sc-if>
+<sc-if value="{{ hasResB }}" hint-placeholder-val="{{ false }}">
+<div id="suggestionsB" role="group" aria-label="Suggestions de communes à comparer" style="display:flex;flex-direction:column;border:1.5px solid #002B59;border-top:0">
+<sc-for list="{{ resB }}" as="r" hint-placeholder-count="0">
+<button onClick="{{ r.pick }}" style="appearance:none;border:0;border-bottom:1px solid #D5DEEA;background:#FFFFFF;text-align:left;padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;min-height:44px;align-items:center" style-hover="background:#EEF4FF"><span style="font-size:16px;font-weight:500;color:#002B59">{{ r.label }}</span><span style="font-size:12.5px;color:#114B8A">{{ r.sub }}</span></button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ hasSelB }}" hint-placeholder-val="{{ false }}"><button onClick="{{ clearB }}" style="align-self:flex-start;appearance:none;border:1px solid #002B59;background:#FFFFFF;color:#002B59;padding:7px 10px;min-height:44px;cursor:pointer;font-size:13px">Retirer la comparaison</button></sc-if>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-size:13px;font-weight:600">Carte affichée</div>
+<div role="group" aria-label="Famille d'indicateurs cartographiée" style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ mapBtns }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="appearance:none;border:1.5px solid #002B59;background:{{ b.bg }};color:{{ b.fg }};padding:8px 12px;min-height:44px;cursor:pointer;font-size:14px;font-weight:500">{{ b.label }}</button></sc-for></div>
+<sc-if value="{{ mobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ showMap }}" style="align-self:flex-start;appearance:none;border:0;border-bottom:2px solid #CA1C60;background:#FFFFFF;color:#002B59;padding:6px 0;min-height:44px;cursor:pointer;font-size:13px;font-weight:600">↑ Voir la carte</button></sc-if>
+<div style="font-size:13px;font-weight:600">Choisir la mesure de santé</div>
+<div role="group" aria-label="Indicateur de santé" style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ healthBtns }}" as="b" hint-placeholder-count="2">
+<button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="appearance:none;border:1.5px solid #002B59;background:{{ b.bg }};color:{{ b.fg }};padding:8px 12px;min-height:44px;cursor:pointer;font-size:14px;font-weight:500">{{ b.label }}</button>
+</sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-size:13px;font-weight:600">Choisir la mesure de prévention</div>
+<div role="group" aria-label="Prévention" style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ prevBtns }}" as="b" hint-placeholder-count="3">
+<button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="appearance:none;border:1.5px solid #002B59;background:{{ b.bg }};color:{{ b.fg }};padding:8px 12px;min-height:44px;cursor:pointer;font-size:14px;font-weight:500">{{ b.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<details class="data-details"><summary>Consulter toutes les valeurs sans la carte</summary><p style="margin:8px 0 0;font-size:12.5px;line-height:1.45">Télécharger les tableaux de données&nbsp;: <a href="data/departements_indicateurs.csv" download>départements</a>, <a href="data/epci_cardio_social.csv" download>intercommunalités</a>, <a href="data/communes_contexte.csv" download>communes des zooms locaux</a>.</p></details>
+</div>
+</section>
+
+<section data-kf="end" data-ch="8" data-screen-label="09 Conclusions et méthode" style="min-height:100vh;display:flex;align-items:flex-start;padding:96px 16px 80px" tabindex="-1">
+<div style="pointer-events:auto;width:min(640px,100%);background:#FFFFFF;padding:24px 28px 30px;border-top:3px solid #002B59;font-size:15px;line-height:1.55;color:#114B8A;display:flex;flex-direction:column;gap:12px">
+<div style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#CA1C60">Ce que montre cette enquête</div>
+<h2 style="margin:0;font-size:clamp(27px,2.5vw,38px);line-height:1.12;color:#002B59">Une adresse situe des écarts. Elle ne donne pas un diagnostic.</h2>
+<ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px">
+<li><strong>Les cartes ne se superposent pas.</strong> Parmi les 20 départements hexagonaux les plus élevés pour le diabète traité et les 20 plus pauvres, 9 figurent dans les deux groupes.</li>
+<li><strong>La différence sociale existe aussi entre personnes.</strong> Dans le Baromètre 2024, 4,5&nbsp;% des adultes se disant financièrement à l’aise déclarent un diabète, contre 9,3&nbsp;% de ceux disant avoir des difficultés financières.</li>
+<li><strong>Une même intercommunalité contient plusieurs situations.</strong> Parmi les 11 communes des Giennoises, certaines figurent dans les 20 % les plus favorisées de France, d’autres dans les 20 % les plus défavorisées. L’accès potentiel à un cardiologue va de 5,75 à 9,50 contacts par an pour 100 habitants.</li>
+</ol>
+<p style="margin:0;padding:10px 12px;background:#F9EECA;color:#002B59">Ces mesures portent sur des populations, des années et des échelles différentes. Leur juxtaposition ne montre pas que la pauvreté ou l’offre de soins provoque une maladie.</p>
+<details class="data-details"><summary>Méthode, périmètre et sources</summary>
+<div style="font-size:13px;line-height:1.5">
+<p>Les cartes départementales et les classements du début couvrent les 96 départements de France hexagonale. Les deux dépistages ont 94 valeurs attribuables, car la Corse n’est pas séparée en 2A et 2B dans les fichiers retenus. Le Baromètre 2024 interroge les 18–79 ans en France hexagonale et dans quatre DROM, hors Mayotte.</p>
+<p>Le diabète traité est un taux départemental standardisé (2023) ; le diabète déclaré provient d’une enquête (2024). Le taux cardio à l’échelle de l’intercommunalité (EPCI) est une moyenne annuelle de patients hospitalisés, corrigée pour tenir compte de l’âge (2021–2023). La carte EPCI utilise les contours officiels de 2024, comme les taux Odissé. Le F-EDI est un indice communal (2021). L’indicateur d’accès potentiel à un cardiologue (APL, 2019) estime le nombre de contacts possibles en médecine de ville avec des cardiologues de 70 ans ou moins. Il ne donne ni le temps de trajet ni le nombre de rendez-vous obtenus.</p>
+<p>Les 59 points du zoom sont des adresses d’exercice sélectionnées dans l’Annuaire Santé (RPPS) d’octobre 2026 et géocodées avec un score d’au moins 0,75. Un point n’est pas un cardiologue unique et les adresses retenues ne forment pas un inventaire exhaustif. Le trajet de Gien vers La Bussière et les contours de 15, 30, 45 et 60 minutes depuis le centre de Gien sont estimés en voiture avec Valhalla sur OpenStreetMap, sans trafic en temps réel. Ces données RPPS et l’APL n’ont ni la même année ni exactement le même périmètre d’offre.</p>
+<p>Sources&nbsp;: <a href="https://odisse.santepubliquefrance.fr/" target="_blank" rel="noopener">Odissé / Santé publique France</a>, <a href="https://www.insee.fr/fr/statistiques/8984752" target="_blank" rel="noopener">Insee Filosofi</a>, <a href="https://irdes.fr/recherche/2025/rapport-597-inegalites-spatiales-d-accessibilite-aux-medecins-specialistes.html" target="_blank" rel="noopener">méthode APL de l’Irdes</a>, <a href="https://www.data.gouv.fr/datasets/annuaire-sante-extractions-des-donnees-en-libre-acces-des-professionnels-intervenant-dans-le-systeme-de-sante-rpps" target="_blank" rel="noopener">Annuaire Santé RPPS</a> et © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>.</p>
+<p>Données utilisées&nbsp;: <a href="data/departements_indicateurs.csv" download>table départementale (CSV)</a>, <a href="data/communes_contexte.csv" download>table communale (CSV)</a>, <a href="data/epci_cardio_social.csv" download>table EPCI (CSV)</a>.</p>
+</div></details>
+<p style="margin:0;padding-top:8px;border-top:1px solid #D5DEEA;font-size:12px">Evann Hislers et Mathys Gauthier · Défi Odissé Dataviz Challenge 2026 · Mise à jour du 7 octobre 2026</p>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ouverture&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;immersive&quot;,&quot;sobre&quot;],&quot;default&quot;:&quot;sobre&quot;,&quot;tsType&quot;:&quot;'immersive' | 'sobre'&quot;,&quot;section&quot;:&quot;Récit&quot;},&quot;isochrones&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Récit&quot;},&quot;mouvementReduit&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Accessibilité&quot;}}">
+const RAMPS={health:['#DCE8FF','#96BBFF','#4F7FCB','#114B8A','#002B59'],social:['#F7E9FD','#E8BDF9','#D27FC8','#CA1C60','#7A0F3A'],birth:['#FDF6E3','#F9EECA','#FFD7B6','#E89A6C','#B5552F'],access:['#E9FBF1','#BAF4D5','#6CC7B0','#2F8A93','#114B8A']};
+const LAYERS={
+ diab:{geo:'dep',field:'diabete_traite_standardise_2023_pct',ramp:'health',digits:2,t:'Diabète traité',d:'Traitement par médicament, taux corrigé pour l\'âge',pop:'Tous âges',u:'%',m:'Département',y:'2023',s:'Odissé'},
+ pauv:{geo:'dep',field:'pauvrete_2023_pct',ramp:'social',digits:1,t:'Taux de pauvreté',d:'Sous le seuil de 60 % du niveau de vie médian',pop:'Population couverte par Filosofi',u:'%',m:'Département',y:'2023',s:'Insee, Filosofi'},
+ pauv_epci:{geo:'epci',field:'pauvrete_2023_pct',ramp:'social',digits:1,t:'Taux de pauvreté',d:'Sous le seuil de 60 % du niveau de vie médian',pop:'Population couverte par Filosofi',u:'%',m:'EPCI',y:'2023',s:'Insee, Filosofi'},
+ hpv:{geo:'dep',field:'hpv_filles_2_doses_16_ans_2025_pct',ramp:'access',digits:1,t:'Vaccination HPV complète',d:'Vaccin contre les papillomavirus, deux doses à 16 ans',pop:'Filles de 16 ans',u:'%',m:'Département',y:'2025',s:'Odissé'},
+ sein:{geo:'dep',field:'depistage_sein_2024_2025_pct',ramp:'access',digits:1,t:'Dépistage organisé du sein',d:'Participation',pop:'Femmes de 50 à 74 ans',u:'%',m:'Département',y:'2024–2025',s:'Odissé'},
+ colo:{geo:'dep',field:'depistage_colorectal_cible_standardise_2024_2025_pct',ramp:'access',digits:1,t:'Dépistage organisé colorectal',d:'Part des personnes concernées ayant participé, taux corrigé pour l’âge',pop:'Personnes de 50 à 74 ans',u:'%',m:'Département',y:'2024–2025',s:'Odissé'},
+ cardio:{geo:'epci',field:'cardiopathies_ischemiques_incidence_2021_2023_pour_100000',ramp:'health',digits:0,t:'Cardiopathie ischémique',d:'Patients hospitalisés pour une maladie des artères du cœur, taux corrigé pour l’âge',pop:'Tous âges',u:'pour 100 000',m:'EPCI',y:'2021–2023',s:'Odissé'},
+ apl:{geo:'com',field:'apl_cardiologie_2019_scen0_b_contacts_pour_100',ramp:'access',digits:2,t:'Accès potentiel à un cardiologue',d:'Estimation des contacts possibles avec les cardiologues de 70 ans ou moins',pop:'Ensemble de la population',u:'contacts / an pour 100 hab.',m:'Commune',y:'2019',s:'Irdes / data.gouv'},
+ fedi:{geo:'com',field:'fedi_score_2021',ramp:'social',digits:2,t:'Situation sociale des communes',d:'Indice de défavorisation sociale, communes classées en cinq groupes d’environ 20 % chacun',pop:'Commune',u:'score sans unité',m:'Commune',y:'2021',s:'Odissé'}
+};
+const ROWS=[['93','Seine-Saint-Denis'],['52','Haute-Marne'],['29','Finistère'],['973','Guyane']];
+const COLS=[{t:['AME ou C2S','gratuite'],short:'AME/C2S',s:'% des femmes ayant accouché',v:{'93':27.3,'52':16.9,'29':10.3,'973':64.6}},{t:['Entretien prénatal','précoce'],short:'Entretien',s:'% de la population éligible',v:{'93':33.5,'52':43.1,'29':80.7,'973':38.9}},{t:['Naissances','prématurées'],short:'Prématurité',s:'% des naissances',v:{'93':7.1,'52':10.4,'29':6.0,'973':11.3}}];
+const SHORT={'244400610':'Cap Atlantique','244500211':'CC Giennoises'};
+const CAP='244400610',GIEN='244500211';
+const CHS=['Diabète','Pauvreté','Baromètre','Grossesse','Prévention','Communes','Zoom local','Chez vous'];
+const DEF={L:['none'],Z:['fr'],night:0,ghost:0,com:0,pts:0,sel:0,iso:0,rep:0,p4:0,rows:0,loupe:0,lpts:0,cols:[0,0,0],focus:null,pins:[]};
+const NUM=['night','ghost','com','pts','sel','iso','rep','p4','rows','loupe','lpts'];
+const KFS={
+ hero:{pins:[[0,'93']]},s1a:{L:['diab'],pins:[[0,'93']]},s1b:{L:['diab'],pins:[[0,'93']]},s1c:{L:['diab'],pins:[[0,'93']]},
+ s2a:{L:['pauv'],pins:[[0,'93']]},s2b:{L:['diab','pauv'],pins:[[0,'93'],[0,'66'],[1,'93'],[1,'66']]},
+ bar:{L:['none']},
+ s4a:{p4:1},s4b:{p4:1,rows:1,cols:[1,0,0]},s4c:{p4:1,rows:1,cols:[.4,1,0]},s4d:{p4:1,rows:1,cols:[.4,.4,1]},s4e:{p4:1,rows:1,cols:[1,1,1]},
+ s5a:{L:['hpv'],pins:[[0,'80']]},s5b:{L:['sein'],pins:[[0,'80']]},s5c:{L:['colo'],pins:[[0,'80']]},s5d:{L:['hpv','sein','colo'],pins:[[0,'80'],[1,'80'],[2,'80']]},
+ s6a:{L:['fedi'],Z:['gien'],com:1},s6b:{L:['fedi'],Z:['gien'],com:1,pins:[[0,'45155'],[0,'45036']]},s6c:{L:['apl'],Z:['gien'],com:1,rep:1},
+ s7a:{L:['apl'],Z:['gienN'],com:1,rep:1,loupe:1},s7b:{L:['apl'],Z:['gienN'],com:1,rep:1,loupe:1,lpts:1},s7c:{L:['apl'],Z:['gienN'],com:1,rep:1,pts:1,iso:2},s7d:{L:['apl'],Z:['gienN'],com:1,rep:1,pts:1,iso:4},
+ explore:{sel:1},end:{sel:1}
+};
+const lerp=(a,b,t)=>a+(b-a)*t,clamp=(x,a=0,b=1)=>x<a?a:x>b?b:x,smooth=x=>{x=clamp(x);return x*x*(3-2*x)};
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[-']/g,' ');
+const fmt=n=>Math.round(n).toLocaleString('fr-FR');
+const metricValue=(row,field)=>row&&row[field]!==''&&row[field]!=null&&Number.isFinite(+row[field])?+row[field]:null;
+const formatMetric=(key,value)=>{if(value==null)return'Donnée absente';const L=LAYERS[key],n=value.toLocaleString('fr-FR',{minimumFractionDigits:L.digits,maximumFractionDigits:L.digits});return n+(L.u==='%'?' %':'')};
+const FEDI_QUINTILES=['entre 1 à 20%','entre 21 et 40%','entre 41 et 60%','entre 61 et 80%','entre 81 et 100%'];
+const fediQuintile=row=>row?FEDI_QUINTILES.indexOf(row.fedi_quintile_national_2021):-1;
+const FEDI_SHORT=['Plus favorisée','Plutôt favorisée','Groupe central','Plutôt défavorisée','Plus défavorisée'];
+const FEDI_LONG=['Parmi les 20 % des communes les plus favorisées','Dans le groupe suivant, plutôt favorisé','Dans le groupe central','Dans le groupe suivant, plutôt défavorisé','Parmi les 20 % des communes les plus défavorisées'];
+
+class Component extends DCLogic {
+ state={ready:false,err:null,caps:[],ch:0,mob:window.innerWidth<1280,qa:'',qb:'',resA:[],resB:[],searchErrorA:'',searchErrorB:'',selA:null,selB:null,mapTheme:'health',health:'diab',prev:'hpv',mobileMapSlot:'A'};
+ canvasRef=React.createRef();capsRef=React.createRef();tipRef=React.createRef();progRef=React.createRef();
+ dirty=true;lastKey='';capKey='';
+
+ componentDidMount(){
+  this._resize=()=>{this.setState({mob:innerWidth<1280});if(this.G)this.layout()};
+  this._move=e=>this.onPointer(e);
+  this._scroll=()=>{const tip=this.tipRef.current;if(tip)tip.style.display='none'};
+  addEventListener('resize',this._resize);addEventListener('mousemove',this._move);
+  addEventListener('scroll',this._scroll,{passive:true});
+  const cv=this.canvasRef.current;if(cv&&this.props.ouverture==='immersive'){cv.width=innerWidth;cv.height=innerHeight;const c=cv.getContext('2d');c.fillStyle='#002B59';c.fillRect(0,0,cv.width,cv.height)}
+  this.init();
+ }
+ componentWillUnmount(){removeEventListener('resize',this._resize);removeEventListener('mousemove',this._move);removeEventListener('scroll',this._scroll);cancelAnimationFrame(this.raf)}
+ componentDidUpdate(){
+  this.dirty=true;
+  if(this.state.mob&&(this._lastNavChapter!==this.state.ch||this._lastNavMobile!==this.state.mob)){
+   const nav=document.querySelector('header nav'),active=nav?.querySelector('[aria-current="step"]');
+   if(nav&&active)nav.scrollTo({left:active.offsetLeft-nav.offsetLeft-(nav.clientWidth-active.clientWidth)/2,behavior:'smooth'});
+  }
+  this._lastNavChapter=this.state.ch;this._lastNavMobile=this.state.mob;
+ }
+
+ async init(){
+  try{
+   let n=0;while(!(window.d3&&window.topojson)){await new Promise(r=>setTimeout(r,60));if(++n>300)throw new Error('libs')}
+   const tj=window.topojson,d3=window.d3;
+   const [dep,epci,com,depRows,epciRows,communeRows,cardioRows,accessRows,isoData,routeData]=await Promise.all([
+    ...['data/dep-fr.json','data/epci-q.json','data/communes-gien.json'].map(u=>fetch(u).then(r=>{if(!r.ok)throw new Error(u);return r.json()})),
+    ...['data/departements_indicateurs.csv','data/epci_cardio_social.csv','data/communes_contexte.csv','data/cardio_lieux_rpps.csv','data/cardio_access_gien.csv'].map(u=>d3.csv(u)),
+    fetch('data/cardio_isochrones_gien.geojson').then(r=>{if(!r.ok)throw new Error('data/cardio_isochrones_gien.geojson');return r.json()}),
+    fetch('data/cardio_trajet_gien.geojson').then(r=>{if(!r.ok)throw new Error('data/cardio_trajet_gien.geojson');return r.json()})
+   ]);
+   const rewind=f=>{const g=f.geometry;if(!g)return f;const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates;for(const p of polys){if(d3.geoArea({type:'Polygon',coordinates:p})>2*Math.PI)p.forEach(r=>r.reverse())}return f};
+   const depF=tj.feature(dep,dep.objects.dep).features.map(rewind);
+   const epciF=tj.feature(epci,epci.objects.epci).features.map(rewind).filter(f=>{const c=d3.geoCentroid(f);return c[0]>-5.6&&c[0]<10&&c[1]>41&&c[1]<51.6});
+   const keep=[CAP,GIEN];
+   const comGeoms=com.objects.com.geometries;
+   const comF=tj.feature(com,com.objects.com).features.map(rewind);
+   const FC={type:'FeatureCollection',features:depF};
+   const proj=d3.geoConicConformal().parallels([44,49]).rotate([-3,0]).fitSize([1000,1000],FC);
+   const path=d3.geoPath(proj);
+   const prep=(arr,key)=>arr.forEach(f=>{f.p2d=new Path2D(path(f));f.bb=path.bounds(f);f.cen=d3.geoCentroid(f);f.pc=proj(f.cen);f.code=f.properties[key]});
+   prep(depF,'code');prep(epciF,'code');prep(comF,'c');
+   const G={dep:depF,epci:epciF,com:comF,proj,path,france:new Path2D(path(FC)),
+    mesh:{dep:new Path2D(path(tj.mesh(dep,dep.objects.dep,(a,b)=>a!==b))),epci:new Path2D(path(tj.mesh(epci,epci.objects.epci,(a,b)=>a!==b))),com:new Path2D(path(tj.mesh(com,com.objects.com,(a,b)=>a!==b)))},
+    outline:new Path2D(path(tj.mesh(dep,dep.objects.dep,(a,b)=>a===b)))};
+   G.data={dep:new Map(depRows.map(r=>[r.code_departement,r])),epci:new Map(epciRows.map(r=>[r.epci_2024,r])),com:new Map(communeRows.map(r=>[r.code_commune_2024,r]))};
+   G.byCode={dep:new Map(depF.map(f=>[f.code,f])),epci:new Map(epciF.map(f=>[f.code,f])),com:new Map(comF.map(f=>[f.code,f]))};
+   G.zone={};keep.forEach(c=>{const g=tj.merge(com,comGeoms.filter(x=>x.properties.e===c));const f=rewind({type:'Feature',geometry:g});G.zone[c]={p2d:new Path2D(path(f)),bb:path.bounds(f)}});
+   const vb=(b,k)=>({cx:(b[0][0]+b[1][0])/2,cy:(b[0][1]+b[1][1])/2,w:(b[1][0]-b[0][0])*k,h:(b[1][1]-b[0][1])*k});
+   G.views={fr:vb(path.bounds(FC),1.02),cap:vb(G.zone[CAP].bb,1.25),gien:vb(G.zone[GIEN].bb,1.25)};
+   const sq=v=>{const m=Math.max(v.w,v.h);return{...v,w:m,h:m}};G.views.cap=sq(G.views.cap);G.views.gien=sq(G.views.gien);
+   G.cls={};G.col={};G.val={};G.stats={};
+   for(const k in LAYERS){const L=LAYERS[k],fs=G[L.geo];const values=fs.map(f=>metricValue(G.data[L.geo].get(f.code),L.field));
+    const sorted=values.filter(v=>v!=null).sort((a,b)=>a-b),cuts=[.2,.4,.6,.8].map(q=>d3.quantileSorted(sorted,q));
+    const classes=values.map((v,i)=>v==null?-1:k==='fedi'?fediQuintile(G.data.com.get(fs[i].code)):d3.bisectRight(cuts,v));
+    G.val[k]=values;G.cls[k]=classes;G.col[k]=classes.map(c=>c<0?'#D9DEE6':RAMPS[L.ramp][c]);
+    G.stats[k]={min:sorted[0],max:sorted[sorted.length-1],missing:values.length-sorted.length};
+    G['ix_'+k]=new Map(fs.map((f,i)=>[f.code,i]))}
+   G.rep={};G.iso={};
+   [[CAP,'Guérande'],[GIEN,'Gien']].forEach(([code,nm])=>{G.rep[code]=comF.find(f=>f.properties.n===nm)||comF.find(f=>f.properties.e===code)});
+   G.iso[CAP]=[];
+   G.iso[GIEN]=(isoData.features||[]).filter(f=>Number.isFinite(+f.properties.contour)).map(f=>({t:+f.properties.contour,p:new Path2D(path(f))})).sort((a,b)=>a.t-b.t);
+   G.cardioSites=cardioRows.map(r=>({id:r.site_id,place:r.commune,p:proj([+r.lon,+r.lat]),nearest:r.site_id==='cardio-024'}));
+   G.accessRows=accessRows;G.gienAccess=accessRows.find(r=>r.code_commune==='45155');
+   G.routePath=new Path2D(path(routeData.features[0]));
+   G.views.capW={...G.views.cap,w:G.views.cap.w*2.6,h:G.views.cap.h*2.6,cx:G.rep[CAP].pc[0],cy:G.rep[CAP].pc[1]};
+   G.views.gienW={...G.views.gien,w:G.views.gien.w*2.6,h:G.views.gien.h*2.6,cx:G.rep[GIEN].pc[0],cy:G.rep[GIEN].pc[1]};
+   {const nb=comF.filter(f=>f.properties.e!==CAP);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;nb.forEach(f=>{x0=Math.min(x0,f.bb[0][0]);y0=Math.min(y0,f.bb[0][1]);x1=Math.max(x1,f.bb[1][0]);y1=Math.max(y1,f.bb[1][1])});const m=Math.max(x1-x0,y1-y0)*.92;G.views.gienN={cx:G.rep[GIEN].pc[0],cy:G.rep[GIEN].pc[1],w:m,h:m}}
+   this.G=G;this.setState({ready:true});
+   this.layout();this.raf=requestAnimationFrame(t=>this.loop(t));
+  }catch(e){console.error('init: '+(e&&e.message));this.setState({err:'Impossible de charger les contours ou les données.'})}
+ }
+
+ layout(){
+  const cv=this.canvasRef.current;if(!cv)return;
+  this.dpr=Math.min(2,devicePixelRatio||1);this.W=innerWidth;this.H=innerHeight;cv.width=this.W*this.dpr;cv.height=this.H*this.dpr;
+  const desk=this.W>=1280;this.desk=desk;
+  this.viz=desk?{x:500,y:84,w:this.W-500-36,h:this.H-84-28}:{x:12,y:64,w:this.W-24,h:Math.round(this.H*.44)};
+  this.capH=desk?(this.W<1500?158:136):92;this.dirty=true;
+ }
+ panelRects(L){
+  const v=this.viz,n=L.length;
+  if(n===1&&L[0]==='none')return[{...v}];
+  const top=v.y+this.capH,h=v.h-this.capH,gap=this.desk?24:8,w=(v.w-gap*(n-1))/n;
+  return L.map((_,k)=>({x:v.x+k*(w+gap),y:top,w,h}));
+ }
+ kf(name){
+  const o={...DEF,...(KFS[name]||{})};
+  if(name==='hero')o.night=this.props.ouverture==='immersive'?1:0;
+  if(this.props.isochrones===false)o.iso=0;
+  if(name==='explore'||name==='end'){
+   if(this.state.selA){
+    const layer=this.state.mapTheme==='poverty'?'pauv':this.state.mapTheme==='prevention'?this.state.prev:this.state.mapTheme==='fedi'?'fedi':this.state.mapTheme==='apl'?'apl':this.state.health;
+    o.L=this.state.selB&&!this.state.mob?[layer,layer]:[layer];
+    o.Z=this.state.selB&&!this.state.mob?['selA','selB']:[this.state.selB&&this.state.mob&&this.state.mobileMapSlot==='B'?'selB':'selA'];
+    o.pins=[];
+   }else{o.L=this.state.mob?[this.state.health]:[this.state.health,'pauv',this.state.prev];o.Z=['fr']}
+  }
+  return o;
+ }
+ get reduced(){return !!this.props.mouvementReduit||matchMedia('(prefers-reduced-motion: reduce)').matches}
+ params(){
+  const steps=[...document.querySelectorAll('[data-kf]')];if(!steps.length)return null;
+  const mid=innerHeight*.5,cs=steps.map(s=>{const r=s.getBoundingClientRect();return r.top+Math.min(r.height,innerHeight)/2});
+  let i=0;while(i<cs.length-1&&cs[i+1]<=mid)i++;
+  let f=i<cs.length-1?(mid-cs[i])/(cs[i+1]-cs[i]):0;if(mid<cs[0])f=0;
+  let e=smooth((f-.2)/.6);if(this.reduced)e=f<.5?0:1;
+  const j=Math.min(i+1,steps.length-1);
+  return{i,e,A:this.kf(steps[i].dataset.kf),B:this.kf(steps[j].dataset.kf),ch:+(e<.5?steps[i]:steps[j]).dataset.ch};
+ }
+ loop(){
+  const P=this.params();
+  if(P){
+   const key=P.i+'|'+P.e.toFixed(4)+'|'+this.W+'|'+this.H;
+   if(this.dirty||key!==this.lastKey){try{this.draw(P)}catch(err){if(!this._errd){this._errd=1;console.error('draw: '+err.message)}}this.lastKey=key;this.dirty=false}
+   if(P.ch!==this.state.ch)this.setState({ch:P.ch});
+   if(this.capList&&this.capsRef.current){const n=this.capsRef.current.querySelectorAll('[data-cap]').length;if(n!==this._capN){this._capN=n;this.posCaps()}}
+   const pr=this.progRef.current;if(pr){const m=document.documentElement.scrollHeight-innerHeight;pr.style.width=(m>0?scrollY/m*100:0)+'%'}
+  }
+  this.raf=requestAnimationFrame(t=>this.loop(t));
+ }
+ feat(code){return code.length>5?this.G.byCode.epci.get(code):code.length===5?this.G.byCode.com.get(code):this.G.byCode.dep.get(code)}
+ viewOf(o,k){const z=o.Z[Math.min(k,o.Z.length-1)],L=o.L[Math.min(k,o.L.length-1)];if(z==='selA')return this.selectionView(this.state.selA,L);if(z==='selB')return this.selectionView(this.state.selB,L);return this.G.views[z]}
+ selectionView(sel,L){
+  if(!sel||!this.G)return this.G.views.fr;
+  if(!this.G.byCode.dep.has(sel.dep))return this.G.views.fr;
+  const f=this.G.byCode.com.get(sel.code),p=sel.centre&&this.G.proj(sel.centre),geo=LAYERS[L]&&LAYERS[L].geo;
+  const minSize=geo==='dep'?220:geo==='epci'?150:90;
+  if(f){const b=f.bb,cx=p?p[0]:(b[0][0]+b[1][0])/2,cy=p?p[1]:(b[0][1]+b[1][1])/2,w=Math.max(b[1][0]-b[0][0],b[1][1]-b[0][1]);const m=Math.max(minSize,Math.min(280,w*12));return{cx,cy,w:m,h:m}}
+  return p?{cx:p[0],cy:p[1],w:minSize,h:minSize}:this.G.views.fr
+ }
+
+ draw({A,B,e}){
+  const G=this.G,cv=this.canvasRef.current,ctx=cv.getContext('2d'),dpr=this.dpr,W=this.W,H=this.H,d3=window.d3;
+  const C={};NUM.forEach(k=>C[k]=lerp(A[k],B[k],e));C.cols=[0,1,2].map(i=>lerp(A.cols[i],B.cols[i],e));
+  const focus=A.focus||B.focus;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;
+  ctx.fillStyle=d3.interpolateRgb('#FFFFFF','#002B59')(C.night);ctx.fillRect(0,0,W,H);
+  const rA=this.panelRects(A.L),rB=this.panelRects(B.L),N=Math.max(rA.length,rB.length),panels=[],capList=[];
+  const baseFill=d3.interpolateRgb('#EDF1F7','#114B8A')(C.night),baseLine=d3.interpolateRgb('#FFFFFF','#3E74B3')(C.night);
+  for(let k=0;k<N;k++){
+   const inA=k<rA.length,inB=k<rB.length,ra=rA[Math.min(k,rA.length-1)],rb=rB[Math.min(k,rB.length-1)];
+   const r=inA&&inB?{x:lerp(ra.x,rb.x,e),y:lerp(ra.y,rb.y,e),w:lerp(ra.w,rb.w,e),h:lerp(ra.h,rb.h,e)}:inB?rb:ra;
+   const pa=(inA&&inB?1:inB?e:1-e)*(1-C.rows),lA=inA?A.L[k]:null,lB=inB?B.L[k]:null;
+   const vA=this.viewOf(A,k),vB=this.viewOf(B,k);
+   const vw={cx:lerp(vA.cx,vB.cx,e),cy:lerp(vA.cy,vB.cy,e),w:Math.exp(lerp(Math.log(vA.w),Math.log(vB.w),e)),h:Math.exp(lerp(Math.log(vA.h),Math.log(vB.h),e))};
+   const ks=Math.min(r.w/vw.w,r.h/vw.h),tx=r.x+r.w/2-vw.cx*ks,ty=r.y+r.h/2-vw.cy*ks;
+   const Lcur=e<.5?(lA||lB):(lB||lA);
+   const zcur=(e<.5?A.Z:B.Z)[Math.min(k,(e<.5?A.Z:B.Z).length-1)];panels.push({r,ks,tx,ty,L:Lcur,pa,Z:zcur});capList.push({r,pa,L:Lcur,Z:zcur,sites:zcur==='gienN'&&(C.pts>.05||C.lpts>.05)});
+   if(pa<=.002)continue;
+   ctx.save();ctx.beginPath();ctx.rect(r.x,r.y,r.w,r.h);ctx.clip();
+   ctx.setTransform(dpr*ks,0,0,dpr*ks,dpr*tx,dpr*ty);
+   const drawLayer=(L,a)=>{if(a<=.002)return;ctx.globalAlpha=a;
+    ctx.fillStyle=baseFill;ctx.fill(G.france);ctx.strokeStyle=baseLine;ctx.lineWidth=.8/ks;ctx.stroke(G.mesh.dep);
+    if(!L||L==='none')return;const Ly=LAYERS[L],fs=G[Ly.geo],cols=G.col[L];
+    for(let i=0;i<fs.length;i++){ctx.fillStyle=cols[i];ctx.fill(fs[i].p2d)}
+    ctx.strokeStyle='#FFFFFF';ctx.lineWidth=(Ly.geo==='dep'?.9:Ly.geo==='epci'?.45:.5)/ks;ctx.stroke(G.mesh[Ly.geo]);
+    if(Ly.geo!=='dep'){ctx.strokeStyle='#002B59';ctx.globalAlpha=a*.35;ctx.lineWidth=.7/ks;ctx.stroke(G.mesh.dep)}};
+   if(inA&&inB){drawLayer(lA,pa);if(lB!==lA&&e>0){const bp=B.pins.find(q=>q[0]===k),bf=bp&&this.feat(bp[1]),c0=bf?bf.pc:[vw.cx,vw.cy],rad=smooth(e)*Math.max(vw.w,vw.h)*1.25;ctx.save();ctx.beginPath();ctx.arc(c0[0],c0[1],rad,0,7);ctx.clip();drawLayer(lB,pa);ctx.restore();if(e<.98){ctx.globalAlpha=pa*.6;ctx.strokeStyle='#002B59';ctx.lineWidth=1.2/ks;ctx.beginPath();ctx.arc(c0[0],c0[1],rad,0,7);ctx.stroke()}}}else drawLayer(lA||lB,pa);
+   if(C.ghost>0&&focus){ctx.globalAlpha=C.ghost*.82*pa;ctx.fillStyle='#FFFFFF';G.dep.forEach(f=>{if(!focus.includes(f.code))ctx.fill(f.p2d)});ctx.globalAlpha=C.ghost*pa;ctx.strokeStyle='#002B59';ctx.lineWidth=1.6/ks;focus.forEach(c=>{const f=G.byCode.dep.get(c);if(f)ctx.stroke(f.p2d)})}
+   ctx.globalAlpha=pa*(.55+.45*C.night);ctx.strokeStyle=C.night>.5?'#3E74B3':'#002B59';ctx.lineWidth=1/ks;ctx.stroke(G.outline);
+   const isC=v=>v===G.views.cap||v===G.views.capW,isG=v=>v===G.views.gien||v===G.views.gienW||v===G.views.gienN;
+   const zv=(isC(vA)||isC(vB))?CAP:(isG(vA)||isG(vB))?GIEN:null;
+   if(zv&&C.iso>0){G.iso[zv].forEach((g,q)=>{const a=clamp(C.iso-q)*pa;if(a<=0)return;ctx.globalAlpha=a*.12;ctx.fillStyle='#96BBFF';ctx.fill(g.p,'evenodd');ctx.globalAlpha=a;ctx.strokeStyle=['#CA1C60','#B5552F','#2F8A93','#002B59'][q]||'#002B59';ctx.lineWidth=(q===Math.ceil(C.iso)-1?2.2:1.35)/ks;ctx.setLineDash(([[],[8,4],[2,4],[12,4,2,4]][q]||[]).map(v=>v/ks));ctx.stroke(g.p);ctx.setLineDash([])})}
+   if(zv===GIEN&&C.lpts>0){ctx.globalAlpha=C.lpts*pa;ctx.strokeStyle='#CA1C60';ctx.lineWidth=2.8/ks;ctx.setLineDash([5/ks,3/ks]);ctx.stroke(G.routePath);ctx.setLineDash([])}
+   if(zv){const zA=Math.min(1,Math.log(1000/vw.w)/Math.log(1000/G.views.cap.w));ctx.globalAlpha=pa*clamp(zA);ctx.strokeStyle='#002B59';ctx.lineWidth=2.2/ks;ctx.stroke(G.zone[zv].p2d)}
+   if(C.com>0){ctx.globalAlpha=C.com*pa*.6;ctx.strokeStyle='#002B59';ctx.lineWidth=.5/ks;ctx.stroke(G.mesh.com)}
+   if(C.sel>0){[[this.state.selB,'#002B59',[5,3]],[this.state.selA,'#CA1C60',[]]].forEach(([s,c,d])=>{if(!s)return;const f=G.byCode.com.get(s.code);if(!f)return;ctx.globalAlpha=C.sel*pa;ctx.strokeStyle=c;ctx.lineWidth=3/ks;ctx.setLineDash(d.map(x=>x/ks));ctx.stroke(f.p2d);ctx.setLineDash([])})}
+   ctx.setTransform(dpr,0,0,dpr,0,0);
+   const S=p=>[tx+p[0]*ks,ty+p[1]*ks];
+   if(C.pts>0){G.cardioSites.forEach(site=>{const[x,y]=S(site.p);if(x<r.x||x>r.x+r.w||y<r.y||y>r.y+r.h)return;ctx.globalAlpha=C.pts*pa;ctx.fillStyle='#FFFFFF';ctx.beginPath();ctx.arc(x,y,site.nearest?7:4.8,0,7);ctx.fill();ctx.fillStyle=site.nearest?'#CA1C60':'#002B59';ctx.beginPath();ctx.arc(x,y,site.nearest?4.5:2.8,0,7);ctx.fill()})}
+   if(zv&&C.loupe>0){const rf=G.rep[zv],[cx,cy]=S(rf.pc),R=C.loupe*Math.min(r.w,r.h)*.36,k2=ks*2.6,tx2=cx-rf.pc[0]*k2,ty2=cy-rf.pc[1]*k2;
+    ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.clip();ctx.globalAlpha=pa;ctx.fillStyle='#FFFFFF';ctx.fillRect(cx-R,cy-R,2*R,2*R);
+    ctx.setTransform(dpr*k2,0,0,dpr*k2,dpr*tx2,dpr*ty2);drawLayer(Lcur,pa);ctx.globalAlpha=pa*.7;ctx.strokeStyle='#002B59';ctx.lineWidth=.6/k2;ctx.stroke(G.mesh.com);ctx.globalAlpha=pa;ctx.lineWidth=2/k2;ctx.stroke(G.zone[zv].p2d);
+    ctx.setTransform(dpr,0,0,dpr,0,0);if(C.lpts>0){G.cardioSites.forEach(site=>{const x=tx2+site.p[0]*k2,y=ty2+site.p[1]*k2;ctx.globalAlpha=C.lpts*pa;ctx.fillStyle='#FFFFFF';ctx.beginPath();ctx.arc(x,y,site.nearest?8:5.8,0,7);ctx.fill();ctx.fillStyle=site.nearest?'#CA1C60':'#002B59';ctx.beginPath();ctx.arc(x,y,site.nearest?5:3.3,0,7);ctx.fill()})}
+    ctx.restore();ctx.save();ctx.globalAlpha=pa*clamp(C.loupe*1.5);ctx.strokeStyle='#002B59';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
+    ctx.font='600 12px Outfit, Arial, sans-serif';ctx.textAlign='center';ctx.fillStyle='#002B59';ctx.fillText('Loupe × 2,6',cx,cy+R+16);ctx.restore()}
+   if(zv&&C.rep>0){const rf=G.rep[zv],[x,y]=S(rf.pc);ctx.save();ctx.globalAlpha=C.rep*pa;ctx.fillStyle='#CA1C60';ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fill();ctx.strokeStyle='#FFFFFF';ctx.lineWidth=2;ctx.stroke();ctx.font='700 13px Outfit, Arial, sans-serif';ctx.textBaseline='middle';ctx.lineWidth=3.5;ctx.lineJoin='round';ctx.strokeText(rf.properties.n,x+11,y);ctx.fillStyle='#CA1C60';ctx.fillText(rf.properties.n,x+11,y);ctx.restore()}
+   if(C.sel>0)[[this.state.selB,'#FFFFFF','#002B59'],[this.state.selA,'#CA1C60','#FFFFFF']].forEach(([s,f1,f2])=>{if(!s||!s.centre)return;const p=G.proj(s.centre);if(!p)return;const[x,y]=S(p);ctx.globalAlpha=C.sel*pa;ctx.fillStyle=f1;ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.fill();ctx.strokeStyle=f2;ctx.lineWidth=2;ctx.stroke()});
+   ctx.restore();
+  }
+  // pins
+  const key=(p,o,k)=>p[0]+':'+p[1]+':'+(o.L[p[0]]||'');
+  const kA=new Set(A.pins.map(p=>key(p,A))),kB=new Set(B.pins.map(p=>key(p,B)));
+  const drawPins=(o,a,other)=>o.pins.forEach(p=>{const kk=key(p,o),al=other.has(kk)?1:a;if(al<=.01)return;if(o===B&&kA.has(kk))return;
+   const pn=panels[p[0]];if(!pn)return;const f=this.feat(p[1]);if(!f)return;const L=o.L[p[0]],Ly=LAYERS[L],row=Ly&&G.data[Ly.geo].get(p[1]),q=L==='fedi'?fediQuintile(row):-1,val=L==='fedi'?(q>=0?FEDI_SHORT[q]:'Donnée absente'):Ly?formatMetric(L,metricValue(row,Ly.field)):'';
+   this.pin(ctx,pn.tx+f.pc[0]*pn.ks,pn.ty+f.pc[1]*pn.ks,SHORT[p[1]]||f.properties.n||f.properties.nom,val,al*pn.pa,pn.r)});
+  drawPins(A,1-e,kB);drawPins(B,e,kA);
+  if(C.p4>0)this.drawRows(ctx,C,panels[0]);
+  this.lastPanels=panels;this.lastC=C;
+  this.updateCaps(capList);
+ }
+ drawRows(ctx,C,p){
+  const G=this.G,v=this.viz,desk=this.desk,lw=desk?176:96,gap=desk?28:10,cw=(v.w-lw-gap*3)/3,y0=v.y+(desk?120:92),rh=Math.min(desk?96:56,(v.y+v.h-y0)/4),R=C.rows;
+  const f1=n=>n.toFixed(1).replace('.',',')+' %';
+  ctx.save();
+  ROWS.forEach(([code,name],i)=>{const f=G.byCode.dep.get(code);let mx,my;if(f){mx=p.tx+f.pc[0]*p.ks;my=p.ty+f.pc[1]*p.ks}else{mx=p.r.x+40;my=p.r.y+p.r.h-34}
+   const ty=y0+i*rh+rh/2,x=lerp(mx,v.x+10,R),y=lerp(my,ty,R);
+   if(!f&&R<1){ctx.globalAlpha=C.p4*(1-R);ctx.setLineDash([4,3]);ctx.strokeStyle='#114B8A';ctx.lineWidth=1;ctx.strokeRect(mx-16,my-30,130,46);ctx.setLineDash([]);ctx.font='500 11px Outfit, Arial, sans-serif';ctx.fillStyle='#114B8A';ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillText('Outre-mer',mx-8,my-16)}
+   if(R>0){ctx.globalAlpha=R*C.p4;ctx.strokeStyle='#D5DEEA';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(v.x,y0+i*rh);ctx.lineTo(v.x+v.w,y0+i*rh);if(i===3){ctx.moveTo(v.x,y0+4*rh);ctx.lineTo(v.x+v.w,y0+4*rh)}ctx.stroke()}
+   ctx.globalAlpha=C.p4;ctx.fillStyle='#CA1C60';ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.fill();ctx.strokeStyle='#FFFFFF';ctx.lineWidth=2;ctx.stroke();
+   const rowName=desk?name:({'93':'Seine-St-Denis','52':'Haute-Marne','29':'Finistère','973':'Guyane'}[code]);
+   ctx.font=`700 ${desk?15:10}px Outfit, Arial, sans-serif`;ctx.textAlign='left';ctx.textBaseline='middle';ctx.lineWidth=3.5;ctx.lineJoin='round';ctx.strokeStyle='#FFFFFF';ctx.strokeText(rowName,x+10,y,desk?lw-14:lw-6);ctx.fillStyle='#002B59';ctx.fillText(rowName,x+10,y,desk?lw-14:lw-6)});
+  COLS.forEach((col,k)=>{const a=C.cols[k]*R;if(a<=.01)return;const cx=v.x+lw+gap+k*(cw+gap),bw=cw*.86;
+   ctx.globalAlpha=a;ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='#002B59';ctx.font=`600 ${desk?13:10}px Outfit, Arial, sans-serif`;
+   if(desk){col.t.forEach((line,i)=>ctx.fillText(line,cx,y0-65+i*16,cw-2));ctx.fillStyle='#114B8A';ctx.font='400 11px Outfit, Arial, sans-serif';ctx.fillText(col.s+', 2024',cx,y0-29,cw-2)}
+   else ctx.fillText(col.short,cx,y0-40,cw-2);
+   ctx.font=`400 ${desk?11:9}px Outfit, Arial, sans-serif`;[0,50,100].forEach(t=>{const xx=cx+t/100*bw;ctx.textAlign=t===0?'left':t===100?'right':'center';ctx.fillText(t+(t===100?' %':''),xx,y0-10)});
+   ROWS.forEach(([code],i)=>{const ty=y0+i*rh+rh/2,val=col.v[code];ctx.strokeStyle='#D5DEEA';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx+bw,ty);ctx.stroke();
+    [0,50,100].forEach(t=>{ctx.beginPath();ctx.moveTo(cx+t/100*bw,ty-4);ctx.lineTo(cx+t/100*bw,ty+4);ctx.stroke()});
+    if(val==null)return;const xx=cx+val/100*bw;ctx.fillStyle='#114B8A';ctx.beginPath();ctx.arc(xx,ty,7,0,7);ctx.fill();
+    ctx.font=`700 ${desk?14:11}px Outfit, Arial, sans-serif`;ctx.textBaseline='bottom';ctx.textAlign=val>80?'right':'left';ctx.fillStyle='#002B59';ctx.fillText(f1(val),val>80?xx-4:xx+4,ty-9)})});
+  ctx.restore();
+ }
+ pin(ctx,x,y,name,val,a,r){
+  ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#CA1C60';ctx.beginPath();ctx.arc(x,y,5.5,0,7);ctx.fill();ctx.strokeStyle='#FFFFFF';ctx.lineWidth=2;ctx.stroke();
+  ctx.font='500 12px Outfit, Arial, sans-serif';const w1=ctx.measureText(name).width;ctx.font='700 24px Outfit, Arial, sans-serif';const w2=ctx.measureText(val).width;
+  if(!val){ctx.font='600 13px Outfit, Arial, sans-serif';const w=ctx.measureText(name).width+20,lft=x+18+w>r.x+r.w,bx=lft?x-18-w:x+18;ctx.fillStyle='#FFFFFF';ctx.fillRect(bx,y-14,w,28);ctx.strokeStyle='#002B59';ctx.lineWidth=1.5;ctx.strokeRect(bx,y-14,w,28);ctx.fillStyle='#CA1C60';ctx.textBaseline='middle';ctx.fillText(name,bx+10,y+1);ctx.restore();return}
+  const bw=Math.max(w1,w2)+20,bh=52,left=x+18+bw>r.x+r.w,bx=left?x-18-bw:x+18,by=Math.max(r.y+2,Math.min(r.y+r.h-bh-2,y-bh/2));
+  ctx.strokeStyle='#002B59';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+(left?-6:6),y);ctx.lineTo(left?bx+bw:bx,y<by?by+6:y>by+bh?by+bh-6:y);ctx.stroke();
+  ctx.fillStyle='#FFFFFF';ctx.fillRect(bx,by,bw,bh);ctx.strokeRect(bx,by,bw,bh);
+  ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.fillStyle='#114B8A';ctx.font='500 12px Outfit, Arial, sans-serif';ctx.fillText(name,bx+10,by+17);
+  ctx.fillStyle='#CA1C60';ctx.font='700 24px Outfit, Arial, sans-serif';ctx.fillText(val,bx+10,by+43);ctx.restore();
+ }
+ updateCaps(list){
+  const key=list.map(c=>{const sel=c.Z==='selA'?this.state.selA:c.Z==='selB'?this.state.selB:null;return c.L+'@'+(c.Z||'')+'@'+(sel?sel.code:'')+'@'+(c.sites?'sites':'')}).join('|');
+  if(key!==this.capKey){this.capKey=key;this.setState({caps:list.map(c=>{const L=LAYERS[c.L];if(!L)return{t:'',meta:'',metaShort:'',sw:[],lo:'',hi:'',missing:'',sitesLegend:false};const st=this.G.stats[c.L],sel=c.Z==='selA'?this.state.selA:c.Z==='selB'?this.state.selB:null;return{t:sel?`${L.t} · ${sel.nom}`:L.t,meta:c.L==='fedi'?'Communes françaises classées en cinq groupes d’environ 20 % chacun · 2021 · Odissé':`${L.d} · ${L.pop} · ${L.y} · ${L.m} · ${L.u} · ${L.s}`,metaShort:c.L==='fedi'?'Cinq groupes de communes · 2021':`${L.y} · ${L.m} · ${L.u}`,sw:RAMPS[L.ramp].map((color,i)=>({color,n:i+1})),lo:c.L==='fedi'?'20 % les plus favorisées':formatMetric(c.L,st.min),hi:c.L==='fedi'?'20 % les plus défavorisées':formatMetric(c.L,st.max),missing:st.missing?`${st.missing} sans valeur`:'',sitesLegend:!!c.sites}})},()=>{this.capList=list;this.posCaps()})}
+  this.capList=list;this.posCaps();
+ }
+ posCaps(){const list=this.capList;if(!list)return;const host=this.capsRef.current;if(!host)return;const els=host.querySelectorAll('[data-cap]');
+  list.forEach((c,k)=>{const el=els[k];if(!el)return;const ok=!!LAYERS[c.L];el.dataset.compact=!this.desk?'1':'0';el.style.left=c.r.x+'px';el.style.top=(c.r.y-this.capH)+'px';el.style.width=c.r.w+'px';el.style.height=(this.capH-8)+'px';el.style.opacity=ok?c.pa:0});
+ }
+ onPointer(ev){
+  const tip=this.tipRef.current;if(!tip||!this.lastPanels||!this.G)return;
+  const hide=()=>{tip.style.display='none'};
+  const t=ev.target;if(t&&t.closest&&t.closest('header,main'))return hide();
+  if(this.lastC&&(this.lastC.night>.5||this.lastC.rows>.3||this.lastC.loupe>.3))return hide();
+  const x=ev.clientX,y=ev.clientY,p=this.lastPanels.find(q=>q.pa>.5&&x>=q.r.x&&x<=q.r.x+q.r.w&&y>=q.r.y&&y<=q.r.y+q.r.h);if(!p)return hide();
+  const Ly=LAYERS[p.L];if(!Ly)return hide();
+  const G=this.G,d3=window.d3,bx=(x-p.tx)/p.ks,by=(y-p.ty)/p.ks,ll=G.proj.invert([bx,by]);if(!ll)return hide();
+  const fs=G[Ly.geo];let hit=-1;
+  for(let i=0;i<fs.length;i++){const b=fs[i].bb;if(bx<b[0][0]||bx>b[1][0]||by<b[0][1]||by>b[1][1])continue;if(d3.geoContains(fs[i],ll)){hit=i;break}}
+  if(hit<0)return hide();
+  const f=fs[hit],pr=f.properties,name=Ly.geo==='com'?pr.n:(SHORT[f.code]||pr.nom),value=G.val[p.L][hit];
+  let html=`<b style="font-weight:600">${name}</b><br>${Ly.t}<br>`;
+  if(p.L==='fedi'&&value!=null){const q=fediQuintile(G.data.com.get(f.code));html+=q>=0?`<span style="color:#CA1C60;font-weight:700;font-size:16px">${FEDI_LONG[q]}</span><br><small>Classement des communes françaises en cinq groupes d’environ 20 % chacun · 2021 · Odissé</small>`:`<span style="color:#114B8A;font-weight:600">Classement non disponible</span>`}
+  else html+=value!=null?`<span style="color:#CA1C60;font-weight:700;font-size:16px">${formatMetric(p.L,value)}</span><br><small>${Ly.y} · ${Ly.m} · ${Ly.u} · ${Ly.s}</small>`:`<span style="color:#114B8A;font-weight:600">Donnée non disponible</span>`;
+  tip.innerHTML=html;tip.style.display='block';const w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.min(this.W-w-8,x+14)+'px';tip.style.top=Math.max(64,y-h-12)+'px';
+ }
+
+ search(slot,q){
+  clearTimeout(this['_qt'+slot]);const rk='res'+slot,qk='q'+slot.toLowerCase();
+  if(q.trim().length<2){this.setState({[rk]:[],['searchError'+slot]:''});return}
+  this['_qt'+slot]=setTimeout(async()=>{
+   const out=[];
+   let error='';
+   try{const r=await fetch(`https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(q)}&fields=nom,code,codeDepartement,codeEpci,population,centre&boost=population&limit=6`);if(!r.ok)throw new Error('Recherche indisponible');const js=await r.json();
+    js.forEach(c=>{const dn=this.G&&this.G.byCode.dep.get(c.codeDepartement);out.push({label:c.nom,sub:`${dn?dn.properties.nom:c.codeDepartement} (${c.codeDepartement})`,pick:()=>this.setSel(slot,this.toSel(c))})})}catch(e){error='La recherche de communes est momentanément indisponible. Réessayez ou choisissez Gien dans les exemples.'}
+   if(norm(this.state[qk])===norm(q))this.setState({[rk]:out,['searchError'+slot]:error});
+  },220);
+ }
+ toSel(c){const local=this.G&&this.G.data.com.get(c.code);return{nom:c.nom,code:c.code,dep:local?local.code_departement:c.codeDepartement,epci:local?local.epci_2024:'',pop:c.population,centre:c.centre&&c.centre.coordinates,sourceMatch:!!local}}
+ setSel(slot,s){if(this.tipRef.current)this.tipRef.current.style.display='none';const other=slot==='A'?this.state.selB:this.state.selA,local=this.G&&this.G.byCode.com.has(s.code)&&(!other||this.G.byCode.com.has(other.code));const mapTheme=!local&&['fedi','apl'].includes(this.state.mapTheme)?'health':this.state.mapTheme;
+  this.setState({['sel'+slot]:s,['res'+slot]:[],['q'+slot.toLowerCase()]:s.nom,['searchError'+slot]:'',mapTheme,mobileMapSlot:slot},()=>{if(this.state.mob){document.querySelector('#exploration h2')?.focus({preventScroll:true});this.goCh(8,false)}else{const results=document.querySelector('#resultsSummary'),target=document.querySelector('#comparisonNote')||results;results?.focus({preventScroll:true});if(target)scrollTo({top:target.getBoundingClientRect().top+scrollY-76,behavior:this.reduced?'auto':'smooth'})}})}
+ selectLocalGien(){const f=this.G&&this.G.byCode.com.get('45155'),r=this.G&&this.G.data.com.get('45155');if(f&&r)this.setSel('A',{nom:'Gien',code:'45155',dep:r.code_departement,epci:r.epci_2024,centre:f.cen,sourceMatch:true})}
+ async pickName(n){try{const r=await fetch(`https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(n)}&fields=nom,code,codeDepartement,codeEpci,population,centre&boost=population&limit=1`);if(!r.ok)throw new Error('Recherche indisponible');const [c]=await r.json();if(c)this.setSel('A',this.toSel(c))}catch(e){this.setState({searchErrorA:'La recherche de communes est momentanément indisponible. Essayez Gien.'})}}
+ cell(L,s){
+  if(!s)return{v:'—',k:'',fs:'15px'};const G=this.G,Ly=LAYERS[L],code=Ly.geo==='dep'?s.dep:Ly.geo==='epci'?s.epci:s.code;
+  const record=G&&G.data[Ly.geo].get(code),value=metricValue(record,Ly.field),dn=G&&G.byCode.dep.get(s.dep);
+  const where=Ly.geo==='dep'?(dn?dn.properties.nom:s.dep):Ly.geo==='epci'?(record?record.libelle_epci:'Intercommunalité non disponible'):s.nom;
+  return value==null?{v:'Non disponible',k:where,fs:'14px'}:{v:formatMetric(L,value),k:where,fs:'20px'};
+ }
+ goCh(n,focus=true){const el=document.querySelector(`[data-ch="${n}"]`);if(!el)return;if(focus)el.focus({preventScroll:true});scrollTo({top:el.getBoundingClientRect().top+scrollY-(n===0?0:56),behavior:this.reduced?'auto':'smooth'})}
+ changeMap(patch){if(this.tipRef.current)this.tipRef.current.style.display='none';this.setState(patch,()=>{if(this.state.mob)this.goCh(8,false)})}
+
+ renderVals(){
+  const s=this.state,mob=s.mob,ouv=this.props.ouverture??'sobre';
+  const summaryLayers=[[s.health,s.health==='diab'?'Diabète traité':'Cardiopathie ischémique'],['pauv','Pauvreté'],['fedi','Situation sociale'],['apl','Accès cardio'],[s.prev,LAYERS[s.prev].t]];
+  const summaryRows=sel=>summaryLayers.map(([L,label])=>{const v=this.cell(L,sel),Ly=LAYERS[L],q=L==='fedi'?fediQuintile(this.G&&this.G.data.com.get(sel.code)):-1;
+   const value=q>=0?FEDI_SHORT[q]:v.v;
+   const meta=L==='cardio'?'Intercommunalité · 2021–2023 · pour 100 000 hab.':L==='apl'?'Commune · 2019 · contacts/an pour 100 hab.':`${Ly.m} · ${Ly.y}`;
+   return{label,value,meta,whiteSpace:L!=='fedi'&&v.v!=='Non disponible'?'nowrap':'normal'}});
+  const summaries=[s.selA&&{name:s.selA.nom,color:'#CA1C60',rows:summaryRows(s.selA)},s.selB&&{name:s.selB.nom,color:'#002B59',rows:summaryRows(s.selB)}].filter(Boolean);
+  const selectedLayer=s.mapTheme==='health'?s.health:s.mapTheme==='poverty'?'pauv':s.mapTheme==='prevention'?s.prev:s.mapTheme;
+  const selectedMetric=LAYERS[selectedLayer];
+  const selectedValue=sel=>{if(selectedLayer==='fedi'){const q=fediQuintile(this.G&&this.G.data.com.get(sel.code));return q>=0?FEDI_LONG[q]:'non disponible'}const v=this.cell(selectedLayer,sel);return v.v==='Non disponible'?'non disponible':`${v.v}${selectedLayer==='cardio'?' pour 100 000 habitants':selectedLayer==='apl'?' contacts par an pour 100 habitants':''}`};
+  const exploreAnnouncement=summaries.length?`Carte : ${selectedMetric.t}, ${selectedMetric.m.toLowerCase()}, ${selectedMetric.y}. ${[s.selA,s.selB].filter(Boolean).map(sel=>`${sel.nom} : ${selectedValue(sel)}`).join('. ')}. Les cinq indicateurs et leurs années figurent dans les fiches.`:`Carte affichée : ${selectedMetric.t}, ${selectedMetric.m.toLowerCase()}, ${selectedMetric.y}. Choisissez une commune pour lire ses valeurs.`;
+  return{
+   canvasRef:this.canvasRef,capsRef:this.capsRef,tipRef:this.tipRef,progRef:this.progRef,
+   caps:s.caps,loading:!s.ready,loadMsg:s.err||'Chargement des contours et des données…',
+   immersive:ouv==='immersive',sobre:ouv!=='immersive',isoOn:this.props.isochrones!==false,
+   stepAlign:mob?'flex-end':'center',stepPad:mob?'calc(64px + 44svh) 12px 28px':'0 0 0 40px',explorePad:mob?'calc(64px + 44svh) 12px 6vh':'96px 0 10vh 40px',compareInstruction:mob?'Choisissez une commune pour la retrouver sur la carte. Ajoutez-en une seconde pour comparer les chiffres, puis passez d’une carte à l’autre.':'Choisissez une commune pour la retrouver sur la carte. Ajoutez-en une seconde pour les comparer côte à côte.',
+   chapters:CHS.map((label,i)=>{const on=s.ch===i+1;return{n:i+1,label,lbl:mob||!on&&innerWidth<1500?'none':'inline',cur:on?'step':'false',bg:on?'#CA1C60':'#FFFFFF',fg:on?'#FFFFFF':'#002B59',bd:on?'#CA1C60':'#96BBFF',go:()=>this.goCh(i+1)}}),
+   goTop:()=>this.goCh(0),
+   qa:s.qa,onQa:e=>{const v=e.target.value;this.setState({qa:v});this.search('A',v)},onQaKey:e=>{if(e.key==='ArrowDown'&&s.resA[0]){e.preventDefault();document.querySelector('#suggestionsA button')?.focus()}else if(e.key==='Escape')this.setState({resA:[]});else if(e.key==='Enter'&&s.resA[0]){e.preventDefault();s.resA[0].pick()}},
+   qb:s.qb,onQb:e=>{const v=e.target.value;this.setState({qb:v});this.search('B',v)},onQbKey:e=>{if(e.key==='ArrowDown'&&s.resB[0]){e.preventDefault();document.querySelector('#suggestionsB button')?.focus()}else if(e.key==='Escape')this.setState({resB:[]});else if(e.key==='Enter'&&s.resB[0]){e.preventDefault();s.resB[0].pick()}},
+   resA:s.resA,resB:s.resB,hasResA:s.resA.length>0,hasResB:s.resB.length>0,noSelA:!s.selA,hasSelA:!!s.selA,
+   trySD:async()=>{try{const r=await fetch('https://geo.api.gouv.fr/communes/93066?fields=nom,code,codeDepartement,codeEpci,population,centre');if(!r.ok)throw new Error('Recherche indisponible');this.setSel('A',this.toSel(await r.json()))}catch(e){this.setState({searchErrorA:'La recherche de communes est momentanément indisponible. Essayez Gien.'})}},tryAmiens:()=>this.pickName('Amiens'),tryGien:()=>this.selectLocalGien(),
+   mapBtns:[['health','Santé'],['poverty','Pauvreté'],['prevention','Prévention'],...(s.selA&&this.G&&this.G.byCode.com.has(s.selA.code)&&(!s.selB||this.G.byCode.com.has(s.selB.code))?[['fedi','Situation sociale'],['apl','Accès cardio']]:[])].map(([k,label])=>{const on=s.mapTheme===k;return{label,on:on?'true':'false',bg:on?'#002B59':'#FFFFFF',fg:on?'#FFFFFF':'#002B59',go:()=>this.changeMap({mapTheme:k})}}),
+   healthBtns:['diab','cardio'].map(k=>{const on=s.health===k;return{label:{diab:'Diabète traité',cardio:'Cardiopathie ischémique'}[k],on:on?'true':'false',bg:on?'#002B59':'#FFFFFF',fg:on?'#FFFFFF':'#002B59',go:()=>this.changeMap({health:k,mapTheme:'health'})}}),
+   prevBtns:['hpv','sein','colo'].map(k=>{const on=s.prev===k;return{label:{hpv:'Vaccination HPV',sein:'Dépistage sein',colo:'Colorectal'}[k],on:on?'true':'false',bg:on?'#002B59':'#FFFFFF',fg:on?'#FFFFFF':'#002B59',go:()=>this.changeMap({prev:k,mapTheme:'prevention'})}}),
+   summaries,hasSummary:summaries.length>0,summaryCols:mob?1:summaries.length===2?2:1,exploreAnnouncement,searchCountA:s.resA.length?`${s.resA.length} commune${s.resA.length>1?'s':''} proposée${s.resA.length>1?'s':''}. Appuyez sur Flèche bas pour la première.`:'',searchCountB:s.resB.length?`${s.resB.length} commune${s.resB.length>1?'s':''} proposée${s.resB.length>1?'s':''} pour la comparaison. Appuyez sur Flèche bas pour la première.`:'',
+   mobileCompare:mob&&!!s.selB,mobileMapBtns:[['A',s.selA?.nom],['B',s.selB?.nom]].filter(([,name])=>name).map(([slot,name])=>{const on=s.mobileMapSlot===slot;return{label:name,on:on?'true':'false',bg:on?'#002B59':'#FFFFFF',fg:on?'#FFFFFF':'#002B59',go:()=>this.changeMap({mobileMapSlot:slot})}}),
+   sameEpci:!!(s.selA&&s.selB&&s.selA.epci&&s.selA.epci===s.selB.epci),outsideMap:!!([s.selA,s.selB].some(q=>q&&this.G&&!this.G.byCode.dep.has(q.dep))),plmNote:!!([s.selA,s.selB].some(q=>q&&['75056','69123','13055'].includes(q.code))),
+   hasSelB:!!s.selB,clearB:()=>this.setState({selB:null,qb:'',resB:[],searchErrorB:'',mobileMapSlot:'A'},()=>document.querySelector('#qb')?.focus({preventScroll:true})),mobile:mob,showMap:()=>this.goCh(8),
+   searchErrorA:s.searchErrorA,searchErrorB:s.searchErrorB,hasSearchErrorA:!!s.searchErrorA,hasSearchErrorB:!!s.searchErrorB,
+  };
+ }
+}
+</script>
+</body>
+</html>

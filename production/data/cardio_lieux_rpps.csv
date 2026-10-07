@@ -1,0 +1,60 @@
+site_id,label,code_commune,commune,code_postal,adresse,lon,lat,score_geocodage,cardiologues_inscrits,mode_exercice,finess_site
+cardio-001,Cabinet de cardiologie,45004,Amilly,45200,267 RUE DU CHRIST 45200 Amilly,2.735578,47.985277,0.969,1,"Lib,indép,artis,com",
+cardio-002,Cabinet de cardiologie,45004,Amilly,45200,32 RUE VINCENT SCOTTO 45200 Amilly,2.771762,47.97497,0.959,1,"Lib,indép,artis,com",
+cardio-003,Cabinet de cardiologie,45004,Amilly,45200,658 A RUE DES BOURGOINS 45200 Amilly,2.77163,47.998688,0.802,1,"Lib,indép,artis,com",
+cardio-004,Établissement de santé,45004,Amilly,45200,658 Rue DES BOURGOINS 45200 Amilly,2.771361,47.998507,0.961,4,"Lib,indép,artis,com; Salarié",450000062
+cardio-005,Établissement de santé,89024,Auxerre,89000,10 Boulevard DE VERDUN 89000 Auxerre,3.556785,47.805862,0.965,2,"Lib,indép,artis,com; Salarié",890008774
+cardio-006,Cabinet de cardiologie,89024,Auxerre,89000,2 BOULEVARD DE VERDUN 89000 Auxerre,3.553249,47.802952,0.965,1,"Lib,indép,artis,com",
+cardio-007,Cabinet de cardiologie,45025,Bazoches-les-Gallerandes,45480,3 BIS RUE DE PITHIVIERS 45480 Bazoches-les-Gallerandes,2.045985,48.161308,0.814,1,"Lib,indép,artis,com",
+cardio-008,Cabinet de cardiologie,77037,Bois-le-Roi,77590,20 AVENUE DU 23 AOUT 77590 Bois-le-Roi,2.670412,48.481453,0.958,2,"Lib,indép,artis,com; Salarié",
+cardio-009,Établissement de santé,77040,Boissise-le-Roi,77310,19 Rue DU CHATEAU 77310 Boissise-le-Roi,2.57215,48.525997,0.959,1,Salarié,770300259
+cardio-010,Cabinet de cardiologie,18033,Bourges,18020,145 AVENUE FRANCOIS MITTERRAND 18020 Bourges,2.437915,47.083626,0.812,4,"Lib,indép,artis,com",
+cardio-011,Établissement de santé,18033,Bourges,18000,5 Rue CHARLES DURAND 18000 Bourges,2.363085,47.061049,0.97,1,Salarié,180010589
+cardio-012,Cabinet de cardiologie,18033,Bourges,18000,RUE MICHAEL FARADAY 18000 Bourges,2.430922,47.095948,0.967,1,"Lib,indép,artis,com",
+cardio-013,Cabinet de cardiologie,89119,Coulanges-sur-Yonne,89480,12 PLACE DE L HOTEL DE VILLE 89480 Coulanges-sur-Yonne,3.539533,47.526369,0.942,1,"Lib,indép,artis,com",
+cardio-014,Cabinet de cardiologie,77152,Dammarie-les-Lys,77190,230 RUE PIERRE CURIE 77190 Dammarie-les-Lys,2.64024,48.514841,0.962,2,"Lib,indép,artis,com",
+cardio-015,Cabinet de cardiologie,77186,Fontainebleau,77300,23 BIS RUE DE L ARBRE SEC 77300 Fontainebleau,2.693138,48.401955,0.82,1,"Lib,indép,artis,com",
+cardio-016,Cabinet de cardiologie,77186,Fontainebleau,77300,27 RUE DE FRANCE 77300 Fontainebleau,2.697759,48.404776,0.971,1,"Lib,indép,artis,com",
+cardio-017,Cabinet de cardiologie,77186,Fontainebleau,77300,4 RUE LAGORSSE 77300 Fontainebleau,2.700855,48.412166,0.966,1,"Lib,indép,artis,com",
+cardio-018,Cabinet de cardiologie,77186,Fontainebleau,77300,43 RUE BERANGER 77300 Fontainebleau,2.702962,48.409503,0.967,1,"Lib,indép,artis,com",
+cardio-019,Établissement de santé,77186,Fontainebleau,77305,55 Boulevard DU MARECHAL JOFFRE 77305 Fontainebleau,2.696791,48.412043,0.814,2,Salarié,770000149
+cardio-020,Cabinet de cardiologie,77186,Fontainebleau,77300,6 RUE DU SERGENT PERRIER 77300 Fontainebleau,2.702758,48.410218,0.962,1,"Lib,indép,artis,com",
+cardio-021,Cabinet de cardiologie,89195,Gron,89100,2 GRANDE RUE 89100 Gron,3.261756,48.160244,0.954,1,"Lib,indép,artis,com",
+cardio-022,Établissement de santé,89206,Joigny,89306,3 QUAI DE L HOPITAL 89306 Joigny,3.395413,47.980431,0.765,2,"Lib,indép,artis,com; Salarié",890975543
+cardio-023,Cabinet de cardiologie,89206,Joigny,89300,QUAI DE L HOPITAL 89300 Joigny,3.397482,47.979195,0.955,1,"Lib,indép,artis,com",
+cardio-024,Cabinet de cardiologie,45060,La Bussière,45230,9 RUE DU CHATEAU 45230 La Bussière,2.750056,47.746358,0.95,1,"Lib,indép,artis,com",
+cardio-025,Cabinet de cardiologie,77389,La Rochette,77000,31 AVENUE DU GENERAL LECLERC 77000 La Rochette,2.653899,48.522133,0.958,1,"Lib,indép,artis,com",
+cardio-026,Cabinet de cardiologie,77389,La Rochette,77000,42 RUE HENRI MATISSE 77000 La Rochette,2.658449,48.520719,0.96,1,"Lib,indép,artis,com",
+cardio-027,Établissement de santé,41106,Lamotte-Beuvron,41600,1 Rue CECILE BOUCHER 41600 Lamotte-Beuvron,2.024674,47.590772,0.957,3,Salarié,410000418; 410009187
+cardio-028,Établissement de santé,77100,Le Châtelet-en-Brie,77820,37 Allee DES PIGNONS BLANCS 77820 Le Châtelet-en-Brie,2.787481,48.50428,0.96,1,Salarié,770026649
+cardio-029,Cabinet de cardiologie,45208,Montargis,45200,46 RUE DE LA QUINTAINE 45200 Montargis,2.73285,48.004203,0.964,1,"Lib,indép,artis,com",
+cardio-030,Cabinet de cardiologie,45208,Montargis,45200,61 RUE ANDRE COQUILLET 45200 Montargis,2.732366,47.991397,0.966,2,"Lib,indép,artis,com",
+cardio-031,Établissement de santé,77305,Montereau-Fault-Yonne,77130,9 Rue FLEUR BEGNE 77130 Montereau-Fault-Yonne,2.955408,48.396569,0.963,1,Salarié,770022911
+cardio-032,Cabinet de cardiologie,45232,Olivet,45160,83 RUE JACQUES MONOD 45160 Olivet,1.907309,47.857611,0.96,2,"Lib,indép,artis,com",
+cardio-033,Établissement de santé,45232,Olivet,45161,83 Rue JACQUES MONOD 45161 Olivet,1.907309,47.857611,0.773,1,"Lib,indép,artis,com",450000245
+cardio-034,Cabinet de cardiologie,45234,Orléans,45100,14 AVENUE DE L'HOPITAL 45100 Orléans,1.92204,47.834781,0.967,1,"Lib,indép,artis,com",
+cardio-035,Cabinet de cardiologie,45234,Orléans,45100,41 AVENUE DAUPHINE 45100 Orléans,1.904992,47.891327,0.978,1,"Lib,indép,artis,com",
+cardio-036,Cabinet de cardiologie,45234,Orléans,45000,5 RUE PAUL LEMESLE 45000 Orléans,1.933676,47.914249,0.973,1,"Lib,indép,artis,com",
+cardio-037,Cabinet de cardiologie,45234,Orléans,45000,69 BOULEVARD MARIE STUART 45000 Orléans,1.928978,47.911895,0.975,1,"Lib,indép,artis,com",
+cardio-038,Cabinet de cardiologie,45234,Orléans,45000,7 RUE PORTE MADELEINE 45000 Orléans,1.896507,47.901651,0.973,1,"Lib,indép,artis,com",
+cardio-039,Cabinet de cardiologie,45234,Orléans,45100,8 PLACE OLIVIER DE SERRES 45100 Orléans,1.891521,47.887916,0.966,1,"Lib,indép,artis,com",
+cardio-040,Cabinet de cardiologie,45252,Pithiviers,45300,13 MAIL SUD 45300 Pithiviers,2.255144,48.171746,0.962,1,"Lib,indép,artis,com",
+cardio-041,Cabinet de cardiologie,41194,Romorantin-Lanthenay,41200,20 FAUBOURG SAINT ROCH 41200 Romorantin-Lanthenay,1.748605,47.35843,0.968,15,"Lib,indép,artis,com",
+cardio-042,Cabinet de cardiologie,18205,Saint-Doulchard,18230,1 RUE DOCTEUR LAENNEC 18230 Saint-Doulchard,2.368364,47.098152,0.953,1,"Lib,indép,artis,com",
+cardio-043,Établissement de santé,18205,Saint-Doulchard,18230,210 ROUTE DE VOUZERON 18230 Saint-Doulchard,2.356531,47.106462,0.965,6,"Lib,indép,artis,com; Salarié",180004145
+cardio-044,Cabinet de cardiologie,18205,Saint-Doulchard,18230,87 RUE ALFRED STANKE 18230 Saint-Doulchard,2.358549,47.103063,0.955,1,"Lib,indép,artis,com",
+cardio-045,Cabinet de cardiologie,45282,Saint-Hilaire-Saint-Mesmin,45160,130 PLACE DU MARCHE 45160 Saint-Hilaire-Saint-Mesmin,1.833115,47.866354,0.948,2,"Lib,indép,artis,com",
+cardio-046,Cabinet de cardiologie,45286,Saint-Jean-le-Blanc,45650,5 BIS LEVEE DES CAPUCINS 45650 Saint-Jean-le-Blanc,1.920301,47.893575,0.799,1,"Lib,indép,artis,com",
+cardio-047,Établissement de santé,77419,Saint-Mammès,77670,57 Rue GAMBETTA 77670 Saint-Mammès,2.815049,48.388583,0.963,1,Salarié,770028579
+cardio-048,Cabinet de cardiologie,45302,Saran,45770,551 AVENUE JACQUELINE AURIOL 45770 Saran,1.877072,47.942016,0.777,1,"Lib,indép,artis,com",
+cardio-049,Établissement de santé,45302,Saran,45770,555 AVENUE JACQUELINE AURIOL 45770 Saran,1.877072,47.942016,0.777,2,"Lib,indép,artis,com",450020177
+cardio-050,Établissement de santé,45302,Saran,45770,559 AVENUE JACQUELINE AURIOL 45770 Saran,1.877072,47.942016,0.777,21,"Lib,indép,artis,com; Salarié",450000294
+cardio-051,Cabinet de cardiologie,45302,Saran,45770,716 RUE MARYSE HILSZ 45770 Saran,1.882318,47.941464,0.959,1,"Lib,indép,artis,com",
+cardio-052,Établissement de santé,89387,Sens,89100,12 Rue PIERRE CASTETS 89100 Sens,3.293363,48.206922,0.959,3,"Lib,indép,artis,com",890000169
+cardio-053,Cabinet de cardiologie,89387,Sens,89100,17 RUE DE SANCEY 89100 Sens,3.322233,48.201828,0.961,1,"Lib,indép,artis,com",
+cardio-054,Cabinet de cardiologie,89387,Sens,89100,5 PROMENADE DES CHAMPS PLAISANTS 89100 Sens,3.304443,48.194006,0.964,3,"Lib,indép,artis,com",
+cardio-055,Cabinet de cardiologie,89387,Sens,89100,RUE PIERRE CASTETS 89100 Sens,3.294418,48.205334,0.959,1,"Lib,indép,artis,com",
+cardio-056,Cabinet de cardiologie,77458,Souppes-sur-Loing,77460,9 PLACE DE LA REPUBLIQUE 77460 Souppes-sur-Loing,2.732009,48.182044,0.957,1,"Lib,indép,artis,com",
+cardio-057,Cabinet de cardiologie,18279,Vierzon,18100,11 AVENUE HENRI BRISSON 18100 Vierzon,2.06172,47.225889,0.967,1,"Lib,indép,artis,com",
+cardio-058,Établissement de santé,18279,Vierzon,18102,33 Rue LEO MERIGOT 18102 Vierzon,2.05203,47.227672,0.78,1,Salarié,180000200
+cardio-059,Cabinet de cardiologie,77533,Vulaines-sur-Seine,77870,10 TER RUE DU PARC 77870 Vulaines-sur-Seine,2.764337,48.432588,0.806,1,"Lib,indép,artis,com",
