@@ -1,6 +1,6 @@
 # Que nous apprend notre adresse sur notre santé ?
 
-**Équipe :** Evann Hislers et Mathys Gautier  
+**Équipe :** Evann Hislers et Mathys Gautier (Etudiants à Sciences Po Paris, en journalisme)
 **Défi :** Odissé Dataviz Challenge 2026, Défi 3 — Inégalités sociales et territoriales de santé
 
 ## Notre question
@@ -8,6 +8,8 @@
 Que peut nous apprendre notre adresse sur les inégalités de santé, et que ne permet-elle pas d'expliquer ?
 
 ## Notre visualisation
+
+La visualisation est accessible directement ici : <http://mathysgtr.github.io/odissee-defi-3_gautier-hislers/>.
 
 Notre site est un récit interactif que l'on fait avancer en défilant. Les cartes changent de mesure et d'échelle au fil de la lecture : nous partons des départements français, puis nous terminons par un cas très précis, avec onze communes autour de Gien, dans le Loiret. À la fin, un module intéractif permet au lecteur de rechercher sa propre commune et la comparer à une autre.
 
@@ -65,7 +67,7 @@ Nous avons préparé et vérifié les jeux de données avec RStudio et des scrip
 
 ## Consulter le site
 
-La visualisation est directement accessible ici : <http://mathysgtr.github.io/odissee-defi-3_gautier-hislers/>.
+La visualisation est accessible directement ici : <http://mathysgtr.github.io/odissee-defi-3_gautier-hislers/>.
 
 Son code source se trouvent dans [`production/`](production/).
 Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
