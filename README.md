@@ -65,7 +65,7 @@ Nous avons préparé et vérifié les jeux de données avec RStudio et des scrip
 
 ## Consulter le site
 
-Après le transfert du dépôt à MathysGtr sous le nom `defi-3_gauthier-hislers` et l'activation de GitHub Pages, l'adresse de la visualisation sera : <https://mathysgtr.github.io/defi-3_gauthier-hislers/production/>. Ce lien n'est pas encore actif.
+La visualisation est accessible ici : <https://mathysgtr.github.io/defi-3_gauthier-hislers/production/>.
 
 La visualisation et son code source se trouvent dans [`production/`](production/). Pour la voir localement, ouvrir un terminal à la racine du dépôt et lancer :
 
